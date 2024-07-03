@@ -6,7 +6,7 @@ output:
 
 ## About the Data
 
-<details open><summary class = 'drop'><h2>Background</h2></summary>
+<details open><summary class = 'drop'>Background<summary>
 <p>The Northeast Temperate Network (NETN) helps its 13 member parks better understand the health of their biological communities (forests, birds, etc), waters, and other natural resources through long-term monitoring and periodic inventories. Our mission is to collect, manage, and translate high quality information about the condition of natural resources so that our national parks can make better-informed management decisions. This information is also valuable for supporting research projects, providing educational opportunities, and promoting better public understanding of park natural resources.
 <br>
 <br>
@@ -18,7 +18,7 @@ For more information, see the NETN home page: <a href="https://www.nps.gov/im/ne
 </details>
 <br>
 
-<details open><summary class = 'drop'><h2>About the Data</h2></summary>
+<details open><summary class = 'drop'>About the Data</summary>
 <p>The climate summaries rely primarily on monthly gridded climate data downloaded directly from NOAA's National Centers for Environmental Information (<a href="www.ncei.noaa.gov">www.ncei.noaa.gov</a>) and extracted using the centroid of each NETN park. The climate metrics derived from the NOAA gridded climate data in this summary are total monthly precipitation (in), average monthly maximum temperature (F), average monthly minimum temperature (F), and average temperature (F). Historic baselines (aka normals) are also derived from NOAA gridded normals for the same park centroid. This summary uses the 20th century normal (1901 to 2020). 
 <br>
 <br>
