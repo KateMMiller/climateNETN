@@ -28,13 +28,8 @@ yr_current <- params$year_current
 
 child_env <- new.env()
 
-child_env$yr_start <- yr_start
 child_env$yr_current <- yr_current
 child_env$lnetn_list <- c("BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
-```
-
-```{r child = "Iterative_code_chunks.Rmd", eval = T}
-
 ```
 
 ```{r results = 'asis', include = F}
@@ -142,7 +137,6 @@ leaflet(height = 700) %>%
                       ) 
 
 ```
-
 
 
 ```{r child = "About_tabs.Rmd", eval = T}
