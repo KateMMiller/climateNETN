@@ -74,9 +74,9 @@ plotClimDrought <- function(park = "all",
 
   #--- error handling ---
   park <- match.arg(park, several.ok = TRUE,
-                    c("all", "LNETN", "ACAD", "MABI", "MIMA", "MORR",
+                    c("all", "LNETN", "ACAD", "BOHA", "MABI", "MIMA", "MORR",
                       "ROVA", "SAGA", "SAIR", "SARA", "WEFA"))
-  if(any(park == "all")){park = c("ACAD", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")}
+  if(any(park == "all")){park = c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")}
   if(any(park == "LNETN")){park = c("MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
   stopifnot(class(years) %in% c("numeric", "integer"), years >= 1980)
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))

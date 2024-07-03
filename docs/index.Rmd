@@ -2,7 +2,7 @@
 output: 
   html_document:
     fig_caption: yes
-    css: www/webstyles.css
+    css: webstyles.css
     anchor_sections: FALSE
     includes: 
       in_header: "header_manual.html" 

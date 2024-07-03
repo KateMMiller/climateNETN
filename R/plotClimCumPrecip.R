@@ -94,9 +94,10 @@ plotClimCumPrecip <- function(park = "all",
 
   #-- Error handling --
   park <- match.arg(park, several.ok = TRUE,
-                    c("all", "LNETN", "ACAD", "MABI", "MIMA", "MORR",
+                    c("all", "LNETN", "ACAD", "BOHA", "MABI", "MIMA", "MORR",
                       "ROVA", "SAGA", "SAIR", "SARA", "WEFA"))
-  if(any(park == "all")){park = c("ACAD", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
+  if(any(park == "all")){park = c("ACAD", "BOHA", "MABI", "MIMA", "MORR",
+                                  "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
   if(any(park == "LNETN")){park = c("MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
   stopifnot(class(years) %in% c("numeric", "integer"), years >= 2006)
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
@@ -140,7 +141,7 @@ plotClimCumPrecip <- function(park = "all",
   new_dates <- as.Date(new_dates1[new_dates1 <= latest_date_comp], format = "%Y-%m-%d")
   #new_dates <- as.Date(c("2024-05-15", "2024-04-15"), format = "%Y-%m-%d")
 
-  clim_dat_final1 <-
+  clim_dat_long1 <-
     if(length(new_dates) == 0){clim_dat_long
     } else {
       new_months <- as.numeric(format(new_dates, "%m"))
@@ -156,9 +157,6 @@ plotClimCumPrecip <- function(park = "all",
         comb_clim <- rbind(clim_dat_long, new_clim_long)
       } else {clim_dat_long}
     }
-
-  park_names <- unique(getSites(park = park)[,c("UnitCode", "UnitName")])
-  clim_dat_final2 <- left_join(clim_dat_final1, park_names, by = "UnitCode")
 
   # Clim data in decadal and 30-year norms
   avg_dat <- NETN_clim_norms |> filter(UnitCode %in% park) |> #|> filter(month %in% months)
@@ -179,10 +177,10 @@ plotClimCumPrecip <- function(park = "all",
 
   # Combine the annual and norm data so can calculate difference from normal using
   # a generic parameter label
-  clim_dat_long$param <- gsub("prcp", "ppt", clim_dat_long$param)
+  clim_dat_long1$param <- gsub("prcp", "ppt", clim_dat_long1$param)
   avg_dat_long2$param <- gsub("precip", "ppt", avg_dat_long2$param)
 
-  clim_comb <- left_join(clim_dat_long, avg_dat_long2,
+  clim_comb <- left_join(clim_dat_long1, avg_dat_long2,
                          by = c("UnitCode", "UnitName", "month", "param"),
                          suffix = c("_curr", "_norm")) |>
     filter(!is.na(value_norm)) |>

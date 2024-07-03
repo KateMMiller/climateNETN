@@ -51,9 +51,10 @@ getClimDaymet <- function(park = "all",
                               years = c(2006:2023)){
   #--- error handling ---
   park <- match.arg(park, several.ok = TRUE,
-                    c("all", "LNETN", "ACAD", "MABI", "MIMA", "MORR",
+                    c("all", "LNETN", "ACAD", "BOHA", "MABI", "MIMA", "MORR",
                       "ROVA", "SAGA", "SAIR", "SARA", "WEFA"))
   if(any(park == "LNETN")){park = c("MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
+  if(any(park == "all")){park = c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")}
   stopifnot(class(years) %in% c("numeric", "integer"), years >= 1980)
 
   # Check that suggested package required for this function are installed

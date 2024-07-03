@@ -57,9 +57,10 @@
 getClimNOAA <- function(park = 'all', year = as.integer(format(Sys.Date(), "%Y")), months = 5){
   #--- error handling ---
   park <- match.arg(park, several.ok = TRUE,
-                    c("all", "LNETN", "ACAD", "MABI", "MIMA", "MORR",
+                    c("all", "LNETN", "ACAD", "BOHA", "MABI", "MIMA", "MORR",
                       "ROVA", "SAGA", "SAIR", "SARA", "WEFA"))
   if(any(park == "LNETN")){park = c("MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
+  if(any(park == "all")){park = c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")}
   stopifnot(class(year) %in% c("numeric", "integer"), year >= 1895)
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
 
