@@ -10,6 +10,7 @@ plotClimCumPrecip(
   months = 1:12,
   normal = "norm20cent",
   units = "sci",
+  palette = c("#7FC2F2", "#565656"),
   plot_title = TRUE,
   title_type = "UnitCode",
   legend_position = "right",
@@ -45,6 +46,8 @@ Other options include:
 
 \item{units}{Specify if you want Scientific or English units. Acceptable values are "sci" (default) and "eng".
 If "sci" precipitation units are mm; if "eng", precipitation units are in inches.}
+
+\item{palette}{Specify 2 colors, one for the bar plot and one for the line. Default is light blue and grey.}
 
 \item{plot_title}{Logical. If TRUE (default) prints park name at top of figure. If FALSE,
 does not print site name. Only enabled when one park is selected.}

@@ -66,7 +66,8 @@ and precipitation units are in inches.}
 does not print site name. Only enabled when one site is selected.}
 
 \item{palette}{Color palette for plots. Options currently are 'viridis' (yellow - green - blue),
-or create your own by specifying 2 or more colors in quotes, like palette = c("red", "yellow", "blue"),
+magma (yellow, red, purple), plasma (brighter version of magma), turbo (rainbow), or create your
+own by specifying 2 or more colors in quotes, like palette = c("red", "yellow", "blue"),
 or palette = c("yellow", "blue"). Hexcodes work too. If only 1 year is specified, only need to
 specify 1 color}
 

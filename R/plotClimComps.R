@@ -57,7 +57,8 @@
 #' @param layers Options are "points", "lines", or both for Annual Values. By default, only lines will plot.
 #'
 #' @param palette Color palette for plots. Options currently are 'viridis' (yellow - green - blue),
-#' or create your own by specifying 2 or more colors in quotes, like palette = c("red", "yellow", "blue"),
+#' magma (yellow, red, purple), plasma (brighter version of magma), turbo (rainbow), or create your
+#' own by specifying 2 or more colors in quotes, like palette = c("red", "yellow", "blue"),
 #' or palette = c("yellow", "blue"). Hexcodes work too. If only 1 year is specified, only need to
 #' specify 1 color
 #'
@@ -122,7 +123,7 @@ plotClimComps <- function(park = "ACAD",
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
   layers <- match.arg(layers, c("points", "lines"), several.ok = TRUE)
   legend_position <- match.arg(legend_position, c("none", "bottom", "top", "right", "left"))
-  if(all(!palette %in% c("viridis")) & length(years) > 1){stopifnot(length(palette) > 1)}
+  if(all(!palette %in% c("viridis", "magma", "plasma", "turbo")) & length(years) > 1){stopifnot(length(palette) > 1)}
   stopifnot(class(plot_title) == "logical")
   normal <- match.arg(normal, c("norm20cent", "norm1990"))
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
@@ -177,7 +178,7 @@ plotClimComps <- function(park = "ACAD",
      } else {clim_dat_long}
     }
 
-  park_names <- unique(getSites(park = park)[,c("UnitCode", "UnitName")])
+  park_names <- unique(clim_dat[,c("UnitCode", "UnitName")])
   clim_dat_final2 <- left_join(clim_dat_final1, park_names, by = c("UnitCode", "UnitName"))
 
   # Clim data in century or 30-year norms
@@ -257,13 +258,21 @@ plotClimComps <- function(park = "ACAD",
     # } else {as.integer(c(quantile(clim_dat_final$year, probs = c(0, 0.25, 0.5, 0.75, 1), names = FALSE)))}
 
   pal <-
-    if(!any(palette %in% "viridis")){
+    if(!any(palette %in% c("viridis", "magma", "plasma", "turbo"))){
     if(length(palette) > 1){
     colorRampPalette(palette)(length(unique(clim_dat_final$year)))
   } else { # hack to allow gradient to work with 1 color
     colorRampPalette(c(palette, palette))(length(unique(clim_dat_final$year)))
   }
-  }
+    }
+
+
+  vir_pal = ifelse(palette %in% c("viridis", "magma", "plasma", "turbo"), "viridis", "colbrew")
+  vir_option = switch(palette,
+                      viridis = 'viridis',
+                      magma = 'magma',
+                      plasma = 'plasma',
+                      turbo = 'turbo')
 
   #leg_guide <- if(length(years) > 5){"colourbar"} else{"legend"}
   ptitle <- if(length(unique(clim_dat_final$UnitCode)) == 1 & plot_title == TRUE){
@@ -287,13 +296,13 @@ plotClimComps <- function(park = "ACAD",
                  aes(x = mon, y = value, group = as.integer(year),
                      color = as.integer(year), fill = as.integer(year)))} +
   # color palettes for annual data
-  {if(any(palette == 'viridis')) scale_fill_viridis_c(direction = color_dir, guide = "legend",
-                                                       name = 'Annual Values', breaks = year_breaks)} +
-  {if(any(palette == 'viridis')) scale_color_viridis_c(direction = color_dir, guide = "legend",
-                                                        name = 'Annual Values', breaks = year_breaks)} +
-  {if(!any(palette %in% 'viridis')) scale_fill_gradientn(colors = pal, guide = "legend",
+  {if(vir_pal == 'viridis') scale_fill_viridis_c(direction = color_dir, guide = "legend", option = vir_option,
+                                               name = 'Annual Values', breaks = year_breaks)} +
+  {if(vir_pal == 'viridis') scale_color_viridis_c(direction = color_dir, guide = "legend", option = vir_option,
+                                               name = 'Annual Values', breaks = year_breaks)} +
+  {if(vir_pal == "colbrew") scale_fill_gradientn(colors = pal, guide = "legend",
                                                          name = 'Annual Values', breaks = year_breaks)} +
-  {if(!any(palette %in% 'viridis')) scale_color_gradientn(colors = pal, guide = "legend",
+  {if(vir_pal == "colbrew") scale_color_gradientn(colors = pal, guide = "legend",
                                                           name = 'Annual Values', breaks = year_breaks)} +
   # # facets for multiple years
   # {if(length(unique(clim_dat_long$UnitCode)) > 1) facet_wrap(~UnitName)} +

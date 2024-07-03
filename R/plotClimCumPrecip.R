@@ -40,6 +40,8 @@
 #' \item{"norm1990"}{Plots the 30-year norm from 1991 - 2020}
 #' }
 #'
+#' @param palette Specify 2 colors, one for the bar plot and one for the line. Default is light blue and grey.
+#'
 #' @param plot_title Logical. If TRUE (default) prints park name at top of figure. If FALSE,
 #' does not print site name. Only enabled when one park is selected.
 #'
@@ -83,9 +85,11 @@ plotClimCumPrecip <- function(park = "all",
                         months = 1:12,
                         normal = "norm20cent",
                         units = "sci",
+                        palette = c("#7FC2F2", "#565656"),
                         plot_title = TRUE,
                         title_type = "UnitCode",
-                        legend_position = 'right', numcol = 3,
+                        legend_position = 'right',
+                        numcol = 3,
                         gridlines = 'none'){
 
   #-- Error handling --
@@ -104,6 +108,7 @@ plotClimCumPrecip <- function(park = "all",
   title_type <- match.arg(title_type, c("UnitCode", "UnitName"))
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
   units <- match.arg(units, c("sci", "eng"))
+  stopifnot(length(palette) == 2)
 
   #-- Compile data for plotting --
   # Clim data as annual monthly normal
@@ -216,7 +221,7 @@ plotClimCumPrecip <- function(park = "all",
       geom_bar(stat = 'identity', aes(y = cum_ppt_curr, fill = "Curr", color = "Curr"), alpha = 0.8) +
       geom_line(aes(y = cum_ppt_hist, group = stat, color = "Hist"), lwd = 2) +
       scale_color_manual(
-        values = c("Curr" = "#7FC2F2", "Hist" = "#565656"),
+        values = c("Curr" = palette[1], "Hist" = palette[2]),
         labels = c("Curr" = "Current", "Hist" = avg_name),
         aesthetics = c("color", "fill")) +
       # facets
@@ -229,12 +234,10 @@ plotClimCumPrecip <- function(park = "all",
       scale_y_continuous(n.breaks = 8) +
     {if(any(gridlines %in% c("grid_y", "both"))){
       theme(
-        panel.grid.major.y = element_line(color = 'grey'))}} + #,
-    #panel.grid.minor.y = element_line(color = 'grey'))}} +
+        panel.grid.major.y = element_line(color = 'grey'))}} +
     {if(any(gridlines %in% c("grid_x", "both"))){
       theme(
-        panel.grid.major.x = element_line(color = 'grey'))}} +#,
-    #panel.grid.minor.x = element_line(color = 'grey'))}} +
+        panel.grid.major.x = element_line(color = 'grey'))}} +
       theme(legend.position = legend_position,
             axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
             legend.text = element_text(size = 10),
