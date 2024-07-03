@@ -112,3 +112,7 @@ leaflet(height = 700) %>%
 
 ```
 
+```{r}
+rm(list = ls())
+```
+
