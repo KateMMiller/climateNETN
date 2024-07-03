@@ -233,7 +233,6 @@ plotClimComps <- function(park = "ACAD",
       avg_dat_final |> mutate(value = ifelse(param == "precip", value/25.4, (value * 9/5) + 32))
     }
 
-
   # set up filter and labelling on parameter
   if(parameter == "tmean"){
     ann_filt = c("tavg")
@@ -257,22 +256,24 @@ plotClimComps <- function(park = "ACAD",
     # if(length(years) <= 5){years
     # } else {as.integer(c(quantile(clim_dat_final$year, probs = c(0, 0.25, 0.5, 0.75, 1), names = FALSE)))}
 
+  vir_pal = unique(ifelse(palette %in% c("viridis", "magma", "plasma", "turbo"), "viridis", "colbrew"))
+
+  if(any(palette %in% c("viridis", "magma", "plasma", "turbo"))){
+  vir_option <- switch(palette,
+                       viridis = 'viridis',
+                       magma = 'magma',
+                       plasma = 'plasma',
+                       turbo = 'turbo')}
+
   pal <-
-    if(!any(palette %in% c("viridis", "magma", "plasma", "turbo"))){
-    if(length(palette) > 1){
-    colorRampPalette(palette)(length(unique(clim_dat_final$year)))
-  } else { # hack to allow gradient to work with 1 color
-    colorRampPalette(c(palette, palette))(length(unique(clim_dat_final$year)))
-  }
+    if(vir_pal == "colbrew"){
+      if(length(palette) > 1){
+        colorRampPalette(palette)(length(unique(clim_dat_final$year)))
+      } else { # hack to allow gradient to work with 1 color
+        colorRampPalette(c(palette, palette))(length(unique(clim_dat_final$year)))
+      }
     }
 
-
-  vir_pal = ifelse(palette %in% c("viridis", "magma", "plasma", "turbo"), "viridis", "colbrew")
-  vir_option = switch(palette,
-                      viridis = 'viridis',
-                      magma = 'magma',
-                      plasma = 'plasma',
-                      turbo = 'turbo')
 
   #leg_guide <- if(length(years) > 5){"colourbar"} else{"legend"}
   ptitle <- if(length(unique(clim_dat_final$UnitCode)) == 1 & plot_title == TRUE){
