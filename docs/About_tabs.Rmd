@@ -6,20 +6,26 @@ output:
 
 ## About the Data
 
-<details open><summary>Background</summary>
-The Northeast Temperate Network (NETN) helps its 13 member parks better understand the health of their biological communities (forests, birds, etc), waters, and other natural resources through long-term monitoring and periodic inventories. Our mission is to collect, manage, and translate high quality information about the condition of natural resources so that our national parks can make better-informed management decisions. This information is also valuable for supporting research projects, providing educational opportunities, and promoting better public understanding of park natural resources.
+<details open><summary class = 'drop'><h2>Background</h2></summary>
+<p>The Northeast Temperate Network (NETN) helps its 13 member parks better understand the health of their biological communities (forests, birds, etc), waters, and other natural resources through long-term monitoring and periodic inventories. Our mission is to collect, manage, and translate high quality information about the condition of natural resources so that our national parks can make better-informed management decisions. This information is also valuable for supporting research projects, providing educational opportunities, and promoting better public understanding of park natural resources.
+<br>
 <br>
 The Northeast Temperate Network is one of 32 Inventory & Monitoring networks across the country that are developing a strong scientific foundation for stewardship and management of natural resources throughout the National Park System. In this way, we help fulfill the National Park Service's mission of conserving our national treasures for future generations.
-
+<br>
+<br>
 For more information, see the NETN home page: <a href="https://www.nps.gov/im/netn/">https://www.nps.gov/im/netn/</a>
-
+</p>
 </details>
 <br>
 
-<details open><summary>About the Data</summary>
-The climate summaries rely primarily on monthly gridded climate data downloaded directly from NOAA's National Centers for Environmental Information (<a href = "www.ncei.noaa.gov"<www.ncei.noaa.gov</a>) and extracted using the centroid of each NETN park. The climate metrics derived from the NOAA gridded climate data in this summary are total monthly precipitation (in), average monthly maximum temperature (F), average monthly minimum temperature (F), and average temperature (F). Historic baselines (aka normals) are also derived from NOAA gridded normals for the same park centroid. This summary uses the 20th century normal (1901 to 2020). 
+<details open><summary class = 'drop'><h2>About the Data</h2></summary>
+<p>The climate summaries rely primarily on monthly gridded climate data downloaded directly from NOAA's National Centers for Environmental Information (<a href="www.ncei.noaa.gov">www.ncei.noaa.gov</a>) and extracted using the centroid of each NETN park. The climate metrics derived from the NOAA gridded climate data in this summary are total monthly precipitation (in), average monthly maximum temperature (F), average monthly minimum temperature (F), and average temperature (F). Historic baselines (aka normals) are also derived from NOAA gridded normals for the same park centroid. This summary uses the 20th century normal (1901 to 2020). 
+<br>
 <br>
 Drought conditions are derived from the U.S. Drought Monitor (<a href="https://droughtmonitor.unl.edu/">https://droughtmonitor.unl.edu/</a>), which reports proportion of counties that are in one of five drought levels every week. This summary reports drought conditions for the predominant county that each park occurs in. Note that because parks are typically much smaller than the county they occur in, reported drought conditions may not always be the most representative of conditions on the ground. 
 <br>
-Climate data are compiled and visualized using functions in the <a href="https://github.com/KateMMiller/climateNETN/">climateNETN R package</a>. See <a href="https://katemmiller.github.io/waterNETN/"> https://katemmiller.github.io/waterNETN/</a> (user guide for both waterNETN and climateNETN R packages) </a> for details on how to use the functions in this package. Note that, among other features, you can use the 30-year normal instead of the 20th century normal as the baseline, can use scientific units (e.g., F and mm), and can change color palettes and year ranges in plots within climateNETN functions. 
+<br>
+Climate data are compiled and visualized using functions in the <a href="https://github.com/KateMMiller/climateNETN/">climateNETN R package</a>. See <a href="https://katemmiller.github.io/waterNETN/">https://katemmiller.github.io/waterNETN/</a> (user guide for both waterNETN and climateNETN R packages) for details on how to use the functions in this package. Note that, among other features, you can use the 30-year normal instead of the 20th century normal as the baseline, can use scientific units (e.g., F and mm), and can change color palettes and year ranges in plots within climateNETN functions. 
+</p>
+<br>
 </details>

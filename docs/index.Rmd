@@ -79,37 +79,6 @@ parks <- NETN_centroids[,c("UnitCode", "UnitName", "long", "lat")]
 # Source: https://stackoverflow.com/questions/47064921/leaflet-legend-for-addawesomemarkers-function-with-icons
 # Icon library changed from font-awesome to ion
 
-markerLegendHTML <- function(IconSet) {
-    # Container div:
-    legendHtml <- "<div style='padding: 10px; padding-bottom: 10px;'>
-    <h4 style='padding-top:0; padding-bottom:10px; margin: 0; color:#555'> Legend </h4>" #legend title
-
-    n <- 1
-    # Add each icon for ion library icons:
-    for (Icon in IconSet) {
-        if (Icon[["library"]] == "ion") {
-        legendHtml<- 
-          paste0(legendHtml,
-          # marker and marker label div
-          "<div style='width: auto; height: 45px; display: flex; align-items: center;'>",
-          # awesome marker div
-          "<div style='position: relative; display: inline-block; width: 35px; height: 45px;' 
-          class='awesome-marker-icon-", Icon[["markerColor"]]," awesome-marker'>",
-          # add icons and set color
-          # class='ion ion-waterdrop icon-white' selects the correct library, icon, and color
-          "<i style='margin-left: 4px; margin-top: 11px' class= 'ion ion-",
-            Icon[["icon"]]," icon-", Icon[["iconColor"]],"'></i>",
-          "</div>", # close awesome marker div
-          # legend label div - use name set in IconSet
-          "<div style='position: relative; display: inline-block; margin-left: 8px;'>", 
-            names(IconSet)[n] ,"</div>",
-          "</div>") # close marker/marker label div    
-        }
-        n <- n + 1
-    } 
-    paste0(legendHtml, "</div>")
-}
-
 # Create leaflet map
 leaflet(height = 700) %>%
     # set default view of park
@@ -133,7 +102,7 @@ leaflet(height = 700) %>%
                # label on mouseover
                label=as.character(parks$UnitCode),
                       # popup on click
-               popup = paste0("<b>", parks$ParkName, "</b><br>")
+               popup = paste0("<b>", parks$UnitName, "</b><br>")
                       ) 
 
 ```
