@@ -76,6 +76,7 @@ lat_cent <- mean(c(bbox$LatN, bbox$LatS))
 parks <- NETN_centroids[,c("UnitCode", "UnitName", "long", "lat")]
 parks$long[parks$UnitCode == "BOHA"] <- -70.94975
 parks$lat[parks$UnitCode == "BOHA"] <- 42.31547
+parks$UnitName[parks$UnitCode == "BOHA"] <- "Boston Harbor State and National Parks"
 # Legend html generator
 # Source: https://stackoverflow.com/questions/47064921/leaflet-legend-for-addawesomemarkers-function-with-icons
 # Icon library changed from font-awesome to ion
