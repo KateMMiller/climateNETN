@@ -36,4 +36,5 @@ Collate:
     'plotClimComps.R'
     'plotClimCumPrecip.R'
     'plotClimDrought.R'
+    'plotClimRel.R'
     'plotClimTrend.R'
