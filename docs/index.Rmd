@@ -1,0 +1,151 @@
+---
+output: 
+  html_document:
+    fig_caption: yes
+    css: www/webstyles.css
+    anchor_sections: FALSE
+    includes: 
+      in_header: "header_manual.html" 
+      after_body: "footer.html"
+    self_contained: yes
+title: "NETN climate summary"
+params:
+  year_current: 2024 # current year of data
+---
+# {.tabset .tabset-pills}
+
+```{r echo = F, include = F, cache = F}
+knitr::opts_chunk$set(echo = FALSE, fig.pos = "h", warning = FALSE, message = FALSE)
+# Create environment for rmds to pull params from
+library(tidyverse)
+library(climateNETN)
+library(leaflet)
+library(grid)
+library(gridExtra)
+
+yr_current <- params$year_current
+#park_list <- c("MIMA")
+
+child_env <- new.env()
+
+child_env$yr_start <- yr_start
+child_env$yr_current <- yr_current
+child_env$lnetn_list <- c("BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
+```
+
+```{r child = "Iterative_code_chunks.Rmd", eval = T}
+
+```
+
+```{r results = 'asis', include = F}
+acad <- lapply(seq_along(c("ACAD")), function(x){
+  child_env$park = "ACAD"
+  knitr::knit_child("ACAD_summary.rmd", envir = child_env)
+  #knitr::knit_child("About_tabs.Rmd", envir = child_env)
+  })
+```
+```{r results = 'asis'}
+cat(unlist(acad), sep = "\n\n")
+```
+
+```{r results = 'asis', include = F}
+lnetn <- lapply(seq_along(child_env$lnetn_list), function(x){
+  child_env$park = child_env$lnetn_list[[x]]
+  knitr::knit_child("LNETN_park_summary.rmd", envir = child_env)
+  #knitr::knit_child("About_tabs.Rmd", envir = child_env)
+  
+})
+```
+```{r results = 'asis'}
+cat(unlist(lnetn), sep = "\n\n")
+```
+
+## About the Parks
+```{r out.width="80%", message=F}
+NPSbasic <- "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+
+ESRIimagery <- "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+
+ESRItopo <- "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+
+ESRINatGeo <- "http://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}"
+
+bbox <- read.csv("boundboxes.csv") #lat/long coordinates and zoom level for each park 
+
+# Find center coordinates of park box
+data("NETN_centroids")
+long_cent <- mean(c(bbox$LongE, bbox$LongW))
+lat_cent <- mean(c(bbox$LatN, bbox$LatS))
+
+# Compile water sites dataframe with codes, names, lat/long coordinates, and site type
+parks <- NETN_centroids[,c("UnitCode", "UnitName", "long", "lat")]
+
+# Legend html generator
+# Source: https://stackoverflow.com/questions/47064921/leaflet-legend-for-addawesomemarkers-function-with-icons
+# Icon library changed from font-awesome to ion
+
+markerLegendHTML <- function(IconSet) {
+    # Container div:
+    legendHtml <- "<div style='padding: 10px; padding-bottom: 10px;'>
+    <h4 style='padding-top:0; padding-bottom:10px; margin: 0; color:#555'> Legend </h4>" #legend title
+
+    n <- 1
+    # Add each icon for ion library icons:
+    for (Icon in IconSet) {
+        if (Icon[["library"]] == "ion") {
+        legendHtml<- 
+          paste0(legendHtml,
+          # marker and marker label div
+          "<div style='width: auto; height: 45px; display: flex; align-items: center;'>",
+          # awesome marker div
+          "<div style='position: relative; display: inline-block; width: 35px; height: 45px;' 
+          class='awesome-marker-icon-", Icon[["markerColor"]]," awesome-marker'>",
+          # add icons and set color
+          # class='ion ion-waterdrop icon-white' selects the correct library, icon, and color
+          "<i style='margin-left: 4px; margin-top: 11px' class= 'ion ion-",
+            Icon[["icon"]]," icon-", Icon[["iconColor"]],"'></i>",
+          "</div>", # close awesome marker div
+          # legend label div - use name set in IconSet
+          "<div style='position: relative; display: inline-block; margin-left: 8px;'>", 
+            names(IconSet)[n] ,"</div>",
+          "</div>") # close marker/marker label div    
+        }
+        n <- n + 1
+    } 
+    paste0(legendHtml, "</div>")
+}
+
+# Create leaflet map
+leaflet(height = 700) %>%
+    # set default view of park
+    setView(lng = long_cent,
+            lat = lat_cent,
+            zoom = 6) %>% #bbox$Zoom[bbox$ParkCode == park]) %>%
+    # setMaxBounds(lng1 = bbox[bbox$ParkCode == parkcode,]$LongE,
+    #              lng2 = bbox[bbox$ParkCode == parkcode,]$LongW,
+    #              lat1 = bbox[bbox$ParkCode == parkcode,]$LatN,
+    #              lat2 = bbox[bbox$ParkCode == parkcode,]$LatS) %>%
+    # add map tiles
+    addTiles(group="Map", urlTemplate = NPSbasic) %>% 
+    addTiles(group="Imagery", urlTemplate = ESRIimagery) %>% 
+    addTiles(group="Topo", urlTemplate = ESRItopo) %>% 
+    addTiles(group="NatGeo", urlTemplate = ESRINatGeo) %>% 
+  # add button to control map tiles
+    addLayersControl(map = ., baseGroups = c("Map","Imagery","Topo", "NatGeo"),
+                     options = layersControlOptions(collapsed=T)) %>%
+    # add site markers 
+    addMarkers(data = parks, ~long, ~lat, 
+               # label on mouseover
+               label=as.character(parks$UnitCode),
+                      # popup on click
+               popup = paste0("<b>", parks$ParkName, "</b><br>")
+                      ) 
+
+```
+
+
+
+```{r child = "About_tabs.Rmd", eval = T}
+
+```
+

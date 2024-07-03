@@ -1,12 +1,40 @@
 Package: climateNETN
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Compile and visualize NETN climate data
+Version: 1.0
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Kate", "Miller", email = "kathryn_miller@nps.gov", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-8823-6373"))
+Description: This package stores, compiles, summarizes and visualizes climate data for NETN park centroids. Package primarily relies on NOAA gridded climate data (see www.ncei.noaa.gov for more information), which include monthly gridded data from 1895 through to present day and 2 sets of normals- 1901 to 2000 (20th century), and 1991 to 2020 (30-year normal). Climate data are compiled for NETN park centroids.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
+URL: https://github.com/KateMMiller/climateNETN
+BugReports: https://github.com/KateMMiller/climateNETN/issues
+Depends: 
+    R (>= 4.0)
+LazyData: true
+Imports: 
+    dplyr,
+    ggplot2,
+    purrr,
+    tidyr
+Suggests: 
+    httr,
+    jsonlite,
+    ncdf4,
+    raster,
+    sf,
+    XML
+Collate: 
+    'getClimDaymet.R'
+    'getClimDrought.R'
+    'getClimNOAA.R'
+    'getClimWStat.R'
+    'theme_NETN.R'
+    'plotClimAnom.R'
+    'plotClimComps.R'
+    'plotClimCumPrecip.R'
+    'plotClimDrought.R'
+    'plotClimRel.R'
+    'plotClimTrend.R'

@@ -1,2 +1,5 @@
 ^climateNETN\.Rproj$
 ^\.Rproj\.user$
+^LICENSE\.md$
+^scripts$
+^docs$
