@@ -1,0 +1,2 @@
+### climateNETN
+This package stores, compiles, summarizes and visualizes climate data for NETN park centroids. Package primarily relies on NOAA gridded climate data (see www.ncei.noaa.gov for more information), which include monthly gridded data from 1895 through to present day and 2 sets of normals- 1901 to 2000 (20th century), and 1991 to 2020 (30-year normal). Climate data are compiled for NETN park centroids. See <a href="https://katemmiller.github.io/waterNETN/"> waterNETN user guide </a> for details on how to use the functions in this package.
