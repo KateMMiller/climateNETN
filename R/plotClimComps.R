@@ -279,7 +279,7 @@ plotClimComps <- function(park = "ACAD",
   ptitle <- if(length(unique(clim_dat_final$UnitCode)) == 1 & plot_title == TRUE){
     unique(clim_dat_final$UnitCode)} else {NULL}
 
-  avg_name <- ifelse(normal == "norm20cent", "20th Century Baseline", "30 year Baseline")
+  avg_name <- ifelse(normal == "norm20cent", "20th Century Baseline", "30-year Baseline")
 
   clim_plot <-
   ggplot() + theme_NETN() +
