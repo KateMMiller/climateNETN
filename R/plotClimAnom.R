@@ -267,7 +267,7 @@ plotClimAnom <- function(park = "all",
 
   above_label <- if(year_len == 1){paste0("Above baseline for ", years)} else {"Above baseline"}
   below_label <- if(year_len == 1){paste0("Below baseline for ", years)} else {"Below baseline"}
-  avglabel <- ifelse(normal == "norm19cent", "Baseline: 1901 - 2000", "Baseline: 1991 - 2020")
+  avglabel <- ifelse(normal == "norm20cent", "Baseline: 1901 - 2000", "Baseline: 1991 - 2020")
 
 
 anomplot <-
