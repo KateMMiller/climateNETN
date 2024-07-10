@@ -200,7 +200,6 @@ plotClimAnom <- function(park = "all",
     } else if(units == "eng"){
         clim_comb |> mutate(value = ifelse(param == "ppt", value/25.4, (value * 9/5) + 32),
                             avg = ifelse(param == "ppt", avg/25.4, (avg * 9/5) + 32),
-                            std = ifelse(param == "ppt", std/25.4, (std * 9/5) + 32),
                             anom = value - avg)
       }
 
