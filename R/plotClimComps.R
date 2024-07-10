@@ -35,7 +35,8 @@
 #' @param months Vector of numeric months to query. If specifying new months not yet included in
 #' NETN_clim_annual dataset, will download months that are available from NOAA.
 #'
-#' @param parameter Specify the monthly averaged parameter to plot. Acceptable values are
+#' @param parameter Specify the monthly averaged parameter to plot. Can only specify one parameter.
+#' Acceptable values are:
 #' \describe{
 #' \item{"tmean"}{Plot mean temperature comparisons.}
 #' \item{"tmax"}{Plot max temperature comparisons.}
@@ -72,6 +73,9 @@
 #'
 #' @param gridlines Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")
 #'
+#' @param include_error Logical. If TRUE (default), plots min/max, 95% and 50% error bands around the normal.
+#' If FALSE, only plots the normal line.
+#'
 #' @param ... Additional arguments relevant to \code{sumClimAvgs()} or \code{sumClimMonthly()}
 #'
 #' @examples
@@ -92,8 +96,8 @@
 #' plotClimComps(park = "ACAD", years = 2013:2023, parameter = 'ppt',
 #'   palette = c("#75C5FF", "#3563DD", "#323969"))
 #'
-#' # Plot total monthly precip for latest year in ACAD
-#' plotClimComps(park = "ACAD", years = 2024, parameter = "ppt", months = 1:5)
+#' # Plot total monthly precip for latest year in ACAD without the error bands
+#' plotClimComps(park = "ACAD", years = 2024, parameter = "ppt", months = 1:5, palette = "red", include_error = F)
 #'
 #'}
 #'
@@ -110,7 +114,8 @@ plotClimComps <- function(park = "ACAD",
                           plot_title = TRUE,
                           palette = "viridis", color_rev = FALSE,
                           legend_position = 'right',
-                          gridlines = 'none', ...){
+                          gridlines = 'none',
+                          include_error = TRUE, ...){
 
   #-- Error handling --
   park <- match.arg(park, several.ok = FALSE,
@@ -128,12 +133,14 @@ plotClimComps <- function(park = "ACAD",
   normal <- match.arg(normal, c("norm20cent", "norm1990"))
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
   units <- match.arg(units, c("sci", "eng"))
+  stopifnot(class(include_error) == 'logical')
 
   #-- Compile data for plotting --
   # Clim data as annual monthly normal
   data("NETN_clim_annual")
   data("NETN_clim_norms")
 
+  # Prepare annual data for plotting
   clim_dat <- NETN_clim_annual |> filter(UnitCode %in% park)
   clim_dat2 <- clim_dat |> filter(year %in% years) |> filter(month %in% months)
   clim_dat2$date <- as.Date(paste0(clim_dat2$year, "-", clim_dat2$month, "-", 15), format = "%Y-%m-%d")
@@ -179,17 +186,27 @@ plotClimComps <- function(park = "ACAD",
     }
 
   park_names <- unique(clim_dat[,c("UnitCode", "UnitName")])
-  clim_dat_final2 <- left_join(clim_dat_final1, park_names, by = c("UnitCode", "UnitName"))
+  clim_dat_final2 <- left_join(clim_dat_final1, park_names, by = c("UnitCode", "UnitName")) |>
+    filter(param %in% parameter)
 
-  # Clim data in century or 30-year norms
+  # Prepare normal data for plotting
   avg_dat <- NETN_clim_norms |> filter(UnitCode %in% park) #|> filter(month %in% months)
 
   avg_dat_long <- avg_dat |> pivot_longer(cols = -c(UnitCode, UnitName, long, lat, month),
                                                   names_to = "param_full", values_to = "value") |>
     mutate(param = sub("_.*", "", param_full),
-           stat = ifelse(grepl("norm", param_full), "avg", "std"),
+           # stat = ifelse(grepl("norm", param_full), "avg", "std"),
            norm = ifelse(grepl(1901, param_full), "norm20cent", "norm1990")) |>
-    arrange(UnitCode, param, month)
+    arrange(UnitCode, param, month) |>
+    filter(param %in% parameter) |>
+    filter(norm %in% normal)
+
+  avg_dat_long$stat <- sapply(strsplit(avg_dat_long$param_full, "_"), function(x) x[2])
+
+  metric_df <- data.frame(stat = c("norm", "min", "max", "l95", "u95", "l50", "u50"),
+                          metric_type = c("Average", "lower", "upper", "lower", "upper", "lower", "upper"))
+
+  avg_dat_long <- left_join(avg_dat_long, metric_df, by = "stat")
 
   #-- Set up plotting features --
   color_dir <- ifelse(color_rev == FALSE, -1, 1)
@@ -221,40 +238,24 @@ plotClimComps <- function(park = "ACAD",
   norms <- data.frame(norm = c("norm20cent", "norm1990"),
                       param_label = c("years 1901-2000", "years 1991-2020"))
 
-  avg_dat_final <- left_join(avg_dat_long, norms, by = "norm")
+  avg_dat_comb <- left_join(avg_dat_long, norms, by = "norm")
 
-  avg_dat_final$mon <- factor(avg_dat_final$month,
-                              levels = unique(avg_dat_final$month),
-                              labels = unique(month.abb[avg_dat_final$month]), ordered = T)
-
-  avg_dat_final <-
-    if(units == "sci"){avg_dat_final
+  avg_dat_comb$mon <- factor(avg_dat_comb$month,
+                              levels = unique(avg_dat_comb$month),
+                              labels = unique(month.abb[avg_dat_comb$month]), ordered = T)
+  avg_dat_comb <-
+    if(units == "sci"){avg_dat_comb
     } else if(units == "eng"){
-      avg_dat_final |> mutate(value = ifelse(param == "precip", value/25.4, (value * 9/5) + 32))
+      avg_dat_comb |> mutate(value = ifelse(param == "ppt", value/25.4, (value * 9/5) + 32))
     }
 
   # set up filter and labelling on parameter
-  if(parameter == "tmean"){
-    ann_filt = c("tmean")
-    norm_filt <- if(normal == "norm20cent"){"tmean_norm_1901_2000"} else {"tmean_norm_1991_2020"}
-    y_label = paste0("Avg. Monthly Temp. (", units_temp, ")")
-  } else if(parameter == "tmin"){
-    ann_filt = c("tmin")
-    norm_filt <- if(normal == "norm20cent"){"tmin_norm_1901_2000"} else {"tmin_norm_1991_2020"}
-    y_label = paste0("Avg. Minimum Monthly Temp. (", units_temp, ")")
-  } else if(parameter == "tmax"){
-    ann_filt = c("tmax")
-    norm_filt <- if(normal == "norm20cent"){"tmax_norm_1901_2000"} else {"tmax_norm_1991_2020"}
-    y_label = paste0("Avg. Maximum Monthly Temp. (", units_temp, ")")
-  } else if(parameter == "ppt"){
-    ann_filt = c("ppt")
-    norm_filt <- if(normal == "norm20cent"){"ppt_norm_1901_2000"} else {"ppt_norm_1991_2020"}
-    y_label = paste0("Total Monthly Precip. (", units_ppt, ")")
-  }
+  y_label <- if(parameter == "tmean"){paste0("Avg. Monthly Temp. (", units_temp, ")")
+    } else if(parameter == "tmin"){paste0("Avg. Minimum Monthly Temp. (", units_temp, ")")
+    } else if(parameter == "tmax"){paste0("Avg. Maximum Monthly Temp. (", units_temp, ")")
+    } else if(parameter == "ppt"){paste0("Total Monthly Precip. (", units_ppt, ")")}
 
   year_breaks <- as.integer(years)
-    # if(length(years) <= 5){years
-    # } else {as.integer(c(quantile(clim_dat_final$year, probs = c(0, 0.25, 0.5, 0.75, 1), names = FALSE)))}
 
   vir_pal = unique(ifelse(palette %in% c("viridis", "magma", "plasma", "turbo"), "viridis", "colbrew"))
 
@@ -274,56 +275,77 @@ plotClimComps <- function(park = "ACAD",
       }
     }
 
-
   #leg_guide <- if(length(years) > 5){"colourbar"} else{"legend"}
   ptitle <- if(length(unique(clim_dat_final$UnitCode)) == 1 & plot_title == TRUE){
     unique(clim_dat_final$UnitCode)} else {NULL}
 
-  avg_name <- ifelse(normal == "norm20cent", "20th Century Baseline", "30-year Baseline")
+  avg_name <- ifelse(normal == "norm20cent", "Climate baseline: 1901 - 2000", "Climate baseline: 1991 - 2020")
+
+  band_values <- c("d100" = "#DEDEDE", "d95" = "#B7B7B7", "d50" = "#878787")
+
+  band_labels <-
+      c("d100" = "Min/Max",
+        "d95" = "95% range",
+        "d50" = "50% range")
+
+  # Prepare data for error bands
+  avg_dat_norm <- avg_dat_comb |> filter(stat == "norm")
+  avg_dat_dist <- avg_dat_comb |> filter(stat != "norm")
+  avg_dat_dist$distrib <- ifelse(grepl("min|max", avg_dat_dist$stat), "d100",
+                                 paste0("d", gsub("\\D", "", avg_dat_dist$stat)) )
+
+  avg_dat_dist_wide <- avg_dat_dist |> filter(norm == normal) |>
+    select(-stat, -param_full) |>
+    pivot_wider(names_from = metric_type, values_from = value)
+
+    avg_dat_dist_wide$distrib <- factor(avg_dat_dist_wide$distrib, levels = c("d100", "d95", "d50"))
 
   clim_plot <-
-  ggplot() + theme_NETN() +
-  geom_line(data = avg_dat_final |> filter(param_full %in% norm_filt),
-            aes(x = mon, y = value, group = param_label, linetype = param_label),
-            linewidth = 0.8) + #} +
-  # line type for normal
-  scale_linetype_manual(values = c("longdash"), name = avg_name) + #}} +
-  # layers for annual data
-  {if(any(layers %in% "lines"))
-      geom_line(data = clim_dat_final |> filter(param %in% ann_filt),
-                aes(x = mon, y = value, group = as.integer(year), color = as.integer(year)))} +
-  {if(any(layers %in% "points"))
-      geom_point(data = clim_dat_final |> filter(param %in% ann_filt),
-                 aes(x = mon, y = value, group = as.integer(year),
-                     color = as.integer(year), fill = as.integer(year)))} +
-  # color palettes for annual data
-  {if(vir_pal == 'viridis') scale_fill_viridis_c(direction = color_dir, guide = "legend", option = vir_option,
-                                               name = 'Annual Values', breaks = year_breaks)} +
-  {if(vir_pal == 'viridis') scale_color_viridis_c(direction = color_dir, guide = "legend", option = vir_option,
-                                               name = 'Annual Values', breaks = year_breaks)} +
-  {if(vir_pal == "colbrew") scale_fill_gradientn(colors = pal, guide = "legend",
-                                                         name = 'Annual Values', breaks = year_breaks)} +
-  {if(vir_pal == "colbrew") scale_color_gradientn(colors = pal, guide = "legend",
-                                                          name = 'Annual Values', breaks = year_breaks)} +
-  # # facets for multiple years
-  # {if(length(unique(clim_dat_long$UnitCode)) > 1) facet_wrap(~UnitName)} +
-
-  # labels/themes
-  labs(x = NULL, y = y_label, title = ptitle,
-       color = "Annual Values", linetype = avg_name, linewidth = avg_name) +
-    scale_y_continuous(n.breaks = 8) +
-  {if(any(gridlines %in% c("grid_y", "both"))){
-    theme(
-      panel.grid.major.y = element_line(color = 'grey'))}} + #,
-      #panel.grid.minor.y = element_line(color = 'grey'))}} +
-  {if(any(gridlines %in% c("grid_x", "both"))){
-    theme(
-      panel.grid.major.x = element_line(color = 'grey'))}} +#,
-      #panel.grid.minor.x = element_line(color = 'grey'))}} +
-  theme(legend.position = legend_position,
-        legend.text = element_text(size = 10),
-        legend.title = element_text(size = 10),
-        axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1))
+    ggplot() + theme_NETN() +
+    {if(include_error == TRUE){
+      geom_ribbon(data = avg_dat_dist_wide,
+                  aes(ymin = lower, ymax = upper, x = mon, fill = distrib, group = distrib))}} +
+    {if(include_error == TRUE){scale_fill_manual(values = band_values, labels = band_labels, name = avg_name)}} +
+    {if(include_error == TRUE){
+      geom_line(data = avg_dat_norm,
+                aes(x = mon, y = value, group = metric_type, linetype = metric_type),
+                linewidth = 0.8)}} +       # line type for normal
+    {if(include_error == TRUE){
+      scale_linetype_manual(values = c("longdash"), name = NULL) }} + #}} +
+      # layers for annual data
+      {if(any(layers %in% "lines"))
+          geom_line(data = clim_dat_final,
+                    aes(x = mon, y = value, group = as.integer(year), color = as.integer(year)),
+                    lwd = 0.7)} +
+      {if(any(layers %in% "points"))
+          geom_point(data = clim_dat_final,
+                     aes(x = mon, y = value, group = as.integer(year),
+                         color = as.integer(year)))} +
+      # color palettes for annual data
+      {if(vir_pal == 'viridis') scale_color_viridis_c(direction = color_dir, guide = "legend", option = vir_option,
+                                                      name = NULL, #'Annual Values',
+                                                      breaks = year_breaks)} +
+      {if(vir_pal == "colbrew") scale_color_gradientn(colors = pal, guide = "legend",
+                                                      name = NULL, #'Annual Values',
+                                                      breaks = year_breaks)} +
+      # labels/themes
+      labs(x = NULL, y = y_label, title = ptitle,
+           color = NULL,#"Annual Values",
+           linetype = avg_name, linewidth = avg_name) +
+        scale_y_continuous(n.breaks = 8) +
+      {if(any(gridlines %in% c("grid_y", "both"))){
+        theme(
+          panel.grid.major.y = element_line(color = 'grey'))}} +
+      {if(any(gridlines %in% c("grid_x", "both"))){
+        theme(
+          panel.grid.major.x = element_line(color = 'grey'))}} +
+      theme(legend.position = legend_position,
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+            legend.margin = margin(0,0,0,0)) +
+      guides(color = guide_legend(order = 3),
+             fill = guide_legend(order = 1), linetype = guide_legend(order = 2))
 
  return(#suppressWarnings(
    clim_plot
