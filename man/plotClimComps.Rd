@@ -55,7 +55,7 @@ Other options include:
 \item{"tmean"}{Plot mean temperature comparisons.}
 \item{"tmax"}{Plot max temperature comparisons.}
 \item{"tmin"}{Plot min temperature comparisons.}
-\item{"ppt"}{Plot precipitation comparisons.}
+\item{"ppt"}{Plot total precipitation comparisons.}
 }}
 
 \item{units}{Specify if you want Scientific or English units. Acceptable values are "sci" (default) and "eng".

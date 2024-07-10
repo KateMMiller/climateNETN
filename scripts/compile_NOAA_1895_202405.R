@@ -11,11 +11,9 @@ library(tidyverse)
 library(sf)
 library(raster)
 
-NETN_bbox <- data.frame(lat = c(47.38, 44.80, 38.71, 43.40, 39.994187),
-                        long = c(-68.71, -66.67, -74.84, -75.54, -80.521832)) |>
-  st_as_sf(coords = c("long", "lat"), crs = 4326) |> st_bbox()
-
 data("NETN_centroids")
+netn_sf <- st_as_sf(NETN_centroids, coords = c("long", "lat"), crs = 4326)
+netn_bbox <- st_bbox(netn_sf)
 
 compnoaa <- function(yr, mon){
   bnd <- (yr - 1895) * 12 + mon
@@ -58,23 +56,27 @@ netn_2024 <- map(mon24, function(x){
 netn_final <- rbind(netn_hist, netn_2024)
 
 NETN_clim_annual <- netn_final
+
+names(NETN_clim_annual) <- gsub("prcp", "ppt", names(NETN_clim_annual))
+names(NETN_clim_annual) <- gsub("tavg", "tmean", names(NETN_clim_annual))
+
 usethis::use_data(NETN_clim_annual, overwrite = T)
 
-# Add temps as F and precip as "in"
-data("NETN_clim_annual")
-c_to_f <- function(x){
-  (x * 9/5) + 32
-}
-
-mm_to_in <- function(x){
-  (x / 25.4)
-}
-NETN_clim_annual <- NETN_clim_annual |> mutate(across(.cols = starts_with("t"),
-                                                    .fns = ~c_to_f(.x),
-                                                    .names = "{.col}_F"))
-
-NETN_clim_annual <- NETN_clim_annual |> mutate(across(.cols = starts_with("prcp"),
-                                                      .fns = ~mm_to_in(.x),
-                                                      .names = "{.col}_in"))
-usethis::use_data(NETN_clim_annual, overwrite = T)
+# # Add temps as F and precip as "in"
+# data("NETN_clim_annual")
+# c_to_f <- function(x){
+#   (x * 9/5) + 32
+# }
+#
+# mm_to_in <- function(x){
+#   (x / 25.4)
+# }
+# NETN_clim_annual <- NETN_clim_annual |> mutate(across(.cols = starts_with("t"),
+#                                                     .fns = ~c_to_f(.x),
+#                                                     .names = "{.col}_F"))
+#
+# NETN_clim_annual <- NETN_clim_annual |> mutate(across(.cols = starts_with("prcp"),
+#                                                       .fns = ~mm_to_in(.x),
+#                                                       .names = "{.col}_in"))
+# usethis::use_data(NETN_clim_annual, overwrite = T)
 

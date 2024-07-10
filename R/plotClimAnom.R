@@ -42,7 +42,7 @@
 #' \item{"tmean"}{Plot mean temperature comparisons.}
 #' \item{"tmax"}{Plot max temperature comparisons.}
 #' \item{"tmin"}{Plot min temperature comparisons.}
-#' \item{"ppt"}{Plot precipitation comparisons in raw units.}
+#' \item{"ppt"}{Plot total precipitation comparisons in raw units.}
 #' \item{"ppt_pct"}{Plot relative percent difference in precipitation.}
 #' }
 #'
@@ -124,7 +124,7 @@ plotClimAnom <- function(park = "all",
 
   clim_dat_long <-
     clim_dat2 |>
-      select(UnitCode:month, date) |>
+      dplyr::select(UnitCode:month, date) |>
       pivot_longer(cols = -c(UnitCode, UnitName, year, month, date, lat, long),
                    names_to = "param", values_to = "value") |>
     arrange(UnitCode, month, param)
@@ -132,7 +132,7 @@ plotClimAnom <- function(park = "all",
   avg_dat <- NETN_clim_norms |> filter(UnitCode %in% park) #|> filter(month %in% months)
 
   avg_dat_long <- avg_dat |>
-    select(UnitCode:tavg_std_1991_2020) |>
+    dplyr::select(UnitCode:tmean_std_1991_2020) |>
     pivot_longer(cols = -c(UnitCode, UnitName, long, lat, month),
                 names_to = "param_full", values_to = "value") |>
     mutate(param = sub("_.*", "", param_full),
@@ -177,10 +177,10 @@ plotClimAnom <- function(park = "all",
 
   if(nrow(clim_dat) == 0){stop("Specified arguments returned a data frame with 0 records.")}
 
-  clim_dat$param[clim_dat$param == "prcp"] <- "ppt"
-  clim_dat$param[clim_dat$param == "tavg"] <- "tmean"
-  avg_dat_long2$param[avg_dat_long2$param == "precip"] <- "ppt"
-  avg_dat_long2$param[avg_dat_long2$param == "tavg"] <- "tmean"
+  # clim_dat$param[clim_dat$param == "prcp"] <- "ppt"
+  # clim_dat$param[clim_dat$param == "tavg"] <- "tmean"
+  # avg_dat_long2$param[avg_dat_long2$param == "precip"] <- "ppt"
+  # avg_dat_long2$param[avg_dat_long2$param == "tavg"] <- "tmean"
 
   avg_dat3 <- avg_dat_long2 |> dplyr::select(-param_full) |> pivot_wider(names_from = stat, values_from = value)
 

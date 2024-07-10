@@ -41,7 +41,7 @@
 #' \item{"tmean"}{Plot mean temperature comparisons.}
 #' \item{"tmax"}{Plot max temperature comparisons.}
 #' \item{"tmin"}{Plot min temperature comparisons.}
-#' \item{"ppt"}{Plot precipitation comparisons.}
+#' \item{"ppt"}{Plot total precipitation comparisons.}
 #' }
 #'
 #' @param units Specify if you want Scientific or English units. Acceptable values are "sci" (default) and "eng".
@@ -191,14 +191,14 @@ plotClimRel <- function(park = "all",
   # filter on parameter and normal
   cols1 <- switch(parameter,
                   temp = c("tmax_norm_1901_2000", "tmax_norm_1991_2020",
-                           "tavg_norm_1901_2000", "tavg_norm_1991_2020",
+                           "tmean_norm_1901_2000", "tmean_norm_1991_2020",
                            "tmin_norm_1901_2000", "tmin_norm_1991_2020"),
                   tminmax = c("tmax_norm_1901_2000", "tmax_norm_1991_2020",
                               "tmin_norm_1901_2000", "tmin_norm_1991_2020"),
                   tmax = c("tmax_norm_1901_2000", "tmax_norm_1991_2020"),
-                  tmean = c("tavg_norm_1901_2000", "tavg_norm_1991_2020"),
+                  tmean = c("tmean_norm_1901_2000", "tmean_norm_1991_2020"),
                   tmin = c("tmin_norm_1901_2000", "tmin_norm_1991_2020"),
-                  ppt = c("precip_norm_1901_2000", "precip_norm_1991_2020"))
+                  ppt = c("ppt_norm_1901_2000", "ppt_norm_1991_2020"))
 
   # select the norm specified in normal
   cols <- cols1[grepl(as.numeric(substr(normal, 5, 6)), cols1)]
@@ -208,11 +208,11 @@ plotClimRel <- function(park = "all",
 
   # Combine the annual and norm data so can calculate difference from normal using
   # a generic parameter label
-  clim_dat_long$param <- gsub("prcp", "ppt", clim_dat_long$param)
-  clim_dat_long$param <- gsub("tavg", "tmean", clim_dat_long$param)
-
-  avg_dat_long2$param <- gsub("precip", "ppt", avg_dat_long2$param)
-  avg_dat_long2$param <- gsub("tavg", "tmean", avg_dat_long2$param)
+  # clim_dat_long$param <- gsub("prcp", "ppt", clim_dat_long$param)
+  # clim_dat_long$param <- gsub("tavg", "tmean", clim_dat_long$param)
+  #
+  # avg_dat_long2$param <- gsub("precip", "ppt", avg_dat_long2$param)
+  # avg_dat_long2$param <- gsub("tavg", "tmean", avg_dat_long2$param)
 
   clim_comb <- left_join(clim_dat_long, avg_dat_long2,
                          by = c("UnitCode", "UnitName", "month", "param"),
@@ -284,7 +284,7 @@ plotClimRel <- function(park = "all",
              aes(x = mon, y = pct_dif,
                  group = param_label,
                  color = param_label, fill = param_label)) +
-        theme_WQ() +
+        theme_NETN() +
         geom_bar(stat = 'identity', position = 'dodge') +
         geom_hline(aes(yintercept = 0), linetype = "dashed", color = 'black', linewidth = 0.8) +
         # formatting

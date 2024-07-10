@@ -174,8 +174,8 @@ plotClimTrend <- function(park = "all",
       } else {clim_dat_long}
     }
 
-  clim_dat$param[clim_dat$param == "prcp"] <- "ppt"
-  clim_dat$param[clim_dat$param == "tavg"] <- "tmean"
+  # clim_dat$param[clim_dat$param == "prcp"] <- "ppt"
+  # clim_dat$param[clim_dat$param == "tavg"] <- "tmean"
 
   if(nrow(clim_dat) == 0){stop("Specified arguments returned a data frame with 0 records.")}
 

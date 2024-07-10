@@ -44,7 +44,7 @@ download months that are available from NOAA.}
 \item{"tmean"}{Plot mean temperature comparisons.}
 \item{"tmax"}{Plot max temperature comparisons.}
 \item{"tmin"}{Plot min temperature comparisons.}
-\item{"ppt"}{Plot precipitation comparisons in raw units.}
+\item{"ppt"}{Plot total precipitation comparisons in raw units.}
 \item{"ppt_pct"}{Plot relative percent difference in precipitation.}
 }}
 

@@ -40,7 +40,7 @@
 #' \item{"tmean"}{Plot mean temperature comparisons.}
 #' \item{"tmax"}{Plot max temperature comparisons.}
 #' \item{"tmin"}{Plot min temperature comparisons.}
-#' \item{"ppt"}{Plot precipitation comparisons.}
+#' \item{"ppt"}{Plot total precipitation comparisons.}
 #' }
 #'
 #' @param units Specify if you want Scientific or English units. Acceptable values are "sci" (default) and "eng".
@@ -199,7 +199,7 @@ plotClimComps <- function(park = "ACAD",
   units_ppt <- if(units == "sci"){"mm"} else {"in"}
 
   param_labels_annual <-
-    data.frame(param = c("prcp", "tavg", "tmax", "tmin"),
+    data.frame(param = c("ppt", "tmean", "tmax", "tmin"),
                param_label = c(paste0("Total Precip. (", units_ppt, ")"),
                                paste0("Avg. Temp. (", units_temp, ")"),
                                paste0("Max. Temp. (", units_temp, ")"),
@@ -214,7 +214,7 @@ plotClimComps <- function(park = "ACAD",
   clim_dat_final <-
     if(units == "sci"){clim_dat_final
     } else if(units == "eng"){
-      clim_dat_final |> mutate(value = ifelse(param == "prcp", value/25.4, (value * 9/5) + 32))
+      clim_dat_final |> mutate(value = ifelse(param == "ppt", value/25.4, (value * 9/5) + 32))
     }
 
   # norm params
@@ -235,8 +235,8 @@ plotClimComps <- function(park = "ACAD",
 
   # set up filter and labelling on parameter
   if(parameter == "tmean"){
-    ann_filt = c("tavg")
-    norm_filt <- if(normal == "norm20cent"){"tavg_norm_1901_2000"} else {"tavg_norm_1991_2020"}
+    ann_filt = c("tmean")
+    norm_filt <- if(normal == "norm20cent"){"tmean_norm_1901_2000"} else {"tmean_norm_1991_2020"}
     y_label = paste0("Avg. Monthly Temp. (", units_temp, ")")
   } else if(parameter == "tmin"){
     ann_filt = c("tmin")
@@ -247,8 +247,8 @@ plotClimComps <- function(park = "ACAD",
     norm_filt <- if(normal == "norm20cent"){"tmax_norm_1901_2000"} else {"tmax_norm_1991_2020"}
     y_label = paste0("Avg. Maximum Monthly Temp. (", units_temp, ")")
   } else if(parameter == "ppt"){
-    ann_filt = c("prcp")
-    norm_filt <- if(normal == "norm20cent"){"precip_norm_1901_2000"} else {"precip_norm_1991_2020"}
+    ann_filt = c("ppt")
+    norm_filt <- if(normal == "norm20cent"){"ppt_norm_1901_2000"} else {"ppt_norm_1991_2020"}
     y_label = paste0("Total Monthly Precip. (", units_ppt, ")")
   }
 

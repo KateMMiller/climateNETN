@@ -116,7 +116,7 @@ plotClimCumPrecip <- function(park = "all",
   data("NETN_clim_annual")
   data("NETN_clim_norms")
 
-  clim_dat1 <- NETN_clim_annual |> filter(UnitCode %in% park) |> select(UnitCode, UnitName, prcp, year, month)
+  clim_dat1 <- NETN_clim_annual |> filter(UnitCode %in% park) |> dplyr::select(UnitCode, UnitName, ppt, year, month)
   clim_dat2 <- clim_dat1 |> filter(year %in% years) |> filter(month %in% months)
   clim_dat2$date <- as.Date(paste0(clim_dat2$year, "-", clim_dat2$month, "-", 15), format = "%Y-%m-%d")
 
@@ -160,7 +160,7 @@ plotClimCumPrecip <- function(park = "all",
 
   # Clim data in decadal and 30-year norms
   avg_dat <- NETN_clim_norms |> filter(UnitCode %in% park) |> #|> filter(month %in% months)
-    select(UnitCode, UnitName, month, precip_norm_1901_2000, precip_norm_1991_2020)
+    select(UnitCode, UnitName, month, ppt_norm_1901_2000, ppt_norm_1991_2020)
 
   avg_dat_long <- avg_dat |> pivot_longer(cols = -c(UnitCode, UnitName, month),
                                           names_to = "param_full", values_to = "value") |>
@@ -170,15 +170,15 @@ plotClimCumPrecip <- function(park = "all",
     arrange(UnitCode, param, month)
 
   # filter on norm
-  col1 <- ifelse(normal == "norm20cent", "precip_norm_1901_2000", "precip_norm_1991_2020")
+  col1 <- ifelse(normal == "norm20cent", "ppt_norm_1901_2000", "ppt_norm_1991_2020")
 
   avg_dat_long2 <- avg_dat_long |> filter(param_full %in% col1) |>
     filter(stat == "avg") |> filter(norm == normal)
 
   # Combine the annual and norm data so can calculate difference from normal using
   # a generic parameter label
-  clim_dat_long1$param <- gsub("prcp", "ppt", clim_dat_long1$param)
-  avg_dat_long2$param <- gsub("precip", "ppt", avg_dat_long2$param)
+  # clim_dat_long1$param <- gsub("prcp", "ppt", clim_dat_long1$param)
+  # avg_dat_long2$param <- gsub("precip", "ppt", avg_dat_long2$param)
 
   clim_comb <- left_join(clim_dat_long1, avg_dat_long2,
                          by = c("UnitCode", "UnitName", "month", "param"),

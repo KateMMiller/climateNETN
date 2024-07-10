@@ -134,5 +134,8 @@ getClimNOAA <- function(park = 'all', year = as.integer(format(Sys.Date(), "%Y")
   # } else {tryCatch(getnoaa(yr = year, mon = months),
   #                    error = function(e){NULL})}
 
+  names(netn_final) <- gsub("prcp", "ppt", names(netn_final))
+  names(netn_final) <- gsub("tavg", "tmean", names(netn_final))
+
   if(nrow(netn_final) > 0){return(netn_final)} else {return(NULL)}
 }
