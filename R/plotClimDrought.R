@@ -140,7 +140,8 @@ plotClimDrought <- function(park = "all",
   facet_park_county <- if(num_parks > 1 & num_county > num_parks){TRUE} else {FALSE}
 
   x_lab <- NULL #ifelse(year_len == 1, paste0("Year: ", years), "Date")
-
+  y_lab <- if(dom_county == TRUE){paste0("% of ", unique(ddata3$County), " County in Drought")
+    } else {"% of Park Counties in Drought"}
   dplot <-
     ggplot(ddata3, aes(x = Date, y = Pct_Area, fill = drought_legend, color = drought_legend)) +
     # layers
