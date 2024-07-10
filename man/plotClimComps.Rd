@@ -17,6 +17,7 @@ plotClimComps(
   color_rev = FALSE,
   legend_position = "right",
   gridlines = "none",
+  include_error = TRUE,
   ...
 )
 }
@@ -50,7 +51,8 @@ Other options include:
 \item{"norm1990"}{Plots the 30-year norm from 1991 - 2020}
 }}
 
-\item{parameter}{Specify the monthly averaged parameter to plot. Acceptable values are
+\item{parameter}{Specify the monthly averaged parameter to plot. Can only specify one parameter.
+Acceptable values are:
 \describe{
 \item{"tmean"}{Plot mean temperature comparisons.}
 \item{"tmax"}{Plot max temperature comparisons.}
@@ -77,6 +79,9 @@ specify 1 color}
 "none" (Default). Other options are "top", "bottom", "left", "right".}
 
 \item{gridlines}{Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")}
+
+\item{include_error}{Logical. If TRUE (default), plots min/max, 95\% and 50\% error bands around the normal.
+If FALSE, only plots the normal line.}
 
 \item{...}{Additional arguments relevant to \code{sumClimAvgs()} or \code{sumClimMonthly()}}
 }
@@ -109,8 +114,8 @@ plotClimComps(park = "ACAD", years = 2019:2023, parameter = "tmax", normal = "no
 plotClimComps(park = "ACAD", years = 2013:2023, parameter = 'ppt',
   palette = c("#75C5FF", "#3563DD", "#323969"))
 
-# Plot total monthly precip for latest year in ACAD
-plotClimComps(park = "ACAD", years = 2024, parameter = "ppt", months = 1:5)
+# Plot total monthly precip for latest year in ACAD without the error bands
+plotClimComps(park = "ACAD", years = 2024, parameter = "ppt", months = 1:5, palette = "red", include_error = F)
 
 }
 
