@@ -131,12 +131,15 @@ plotClimAnom <- function(park = "all",
 
   avg_dat <- NETN_clim_norms |> filter(UnitCode %in% park) #|> filter(month %in% months)
 
-  avg_dat_long <- avg_dat |>
-    dplyr::select(UnitCode:tmean_std_1991_2020) |>
-    pivot_longer(cols = -c(UnitCode, UnitName, long, lat, month),
-                names_to = "param_full", values_to = "value") |>
+
+  # Only need norms for this plotting function, so dropping error cols
+  avg_dat_cols <- c("UnitCode", "UnitName", "month", names(avg_dat[,grep("norm", names(avg_dat))]))
+  avg_dat1 <- avg_dat[,avg_dat_cols]
+
+  avg_dat_long <- avg_dat1 |>
+    pivot_longer(cols = -c(UnitCode, UnitName, month),
+                names_to = "param_full", values_to = "avg") |>
     mutate(param = sub("_.*", "", param_full),
-           stat = ifelse(grepl("norm", param_full), "avg", "std"),
            norm = ifelse(grepl(1901, param_full), "norm20cent", "norm1990")) |>
     arrange(UnitCode, param, month)
 
@@ -182,9 +185,10 @@ plotClimAnom <- function(park = "all",
   # avg_dat_long2$param[avg_dat_long2$param == "precip"] <- "ppt"
   # avg_dat_long2$param[avg_dat_long2$param == "tavg"] <- "tmean"
 
-  avg_dat3 <- avg_dat_long2 |> dplyr::select(-param_full) |> pivot_wider(names_from = stat, values_from = value)
+  # head(avg_dat_long2)
+  # avg_dat3 <- avg_dat_long2 |> dplyr::select(-param_full) |> pivot_wider(names_from = stat, values_from = value)
 
-  clim_comb <- left_join(clim_dat, avg_dat3 |> dplyr::select(-lat, -long),
+  clim_comb <- left_join(clim_dat, avg_dat_long2,
                          by = c("UnitCode", "UnitName", "month", "param"))
 
   clim_comb$anom <- clim_comb$value - clim_comb$avg
@@ -304,7 +308,7 @@ anomplot <-
         panel.grid.major.x = element_line(color = 'grey'))}} +
     # Axes
     scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format)) +
-    scale_y_continuous(n.breaks = 8) +
+    scale_y_continuous(n.breaks = 8, limits = c(-max(clim_comb4$anom), max(clim_comb4$anom))) +
     # Legend order
     guides(linetype = guide_legend(order = 2),
            fill = guide_legend(order = 1),
