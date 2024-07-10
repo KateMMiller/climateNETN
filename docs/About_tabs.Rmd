@@ -6,7 +6,7 @@ output:
 
 ## About the Data
 
-<details open><summary class = 'drop'>Background<summary>
+<details open><summary class = 'drop'>Background</summary>
 <p>The Northeast Temperate Network (NETN) helps its 13 member parks better understand the health of their biological communities (forests, birds, etc), waters, and other natural resources through long-term monitoring and periodic inventories. Our mission is to collect, manage, and translate high quality information about the condition of natural resources so that our national parks can make better-informed management decisions. This information is also valuable for supporting research projects, providing educational opportunities, and promoting better public understanding of park natural resources.
 <br>
 <br>
