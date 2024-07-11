@@ -309,7 +309,7 @@ plotClimComps <- function(park = "ACAD",
     {if(include_error == TRUE){
       geom_line(data = avg_dat_norm,
                 aes(x = mon, y = value, group = metric_type, linetype = metric_type),
-                linewidth = 0.8)}} +       # line type for normal
+                linewidth = 1)}} +       # line type for normal
     {if(include_error == TRUE){
       scale_linetype_manual(values = c("longdash"), name = NULL) }} + #}} +
       # layers for annual data
