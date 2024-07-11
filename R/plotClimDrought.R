@@ -140,8 +140,9 @@ plotClimDrought <- function(park = "all",
   facet_park_county <- if(num_parks > 1 & num_county > num_parks){TRUE} else {FALSE}
 
   x_lab <- NULL #ifelse(year_len == 1, paste0("Year: ", years), "Date")
-  y_lab <- if(dom_county == TRUE){paste0("% of ", unique(ddata3$County), " County in Drought")
-    } else {"% of Park Counties in Drought"}
+  y_lab <- if(dom_county == TRUE){paste0("% of ", unique(ddata3$County), " in Drought")
+  } else {"% of Park Counties in Drought"}
+
   dplot <-
     ggplot(ddata3, aes(x = Date, y = Pct_Area, fill = drought_legend, color = drought_legend)) +
     # layers
@@ -154,23 +155,22 @@ plotClimDrought <- function(park = "all",
     # theme and labels
     theme_NETN() +
     theme(legend.position = legend_position,
-          axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
-          #axis.text.x = element_text(angle = 90, hjust = 0.5, vjust = 0.5)) +
+          panel.border = element_rect(color = "#696969", fill = NA),
+          panel.background = element_rect(fill = NA, color = NA),
+          axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + #,
     {if(legend_position == "bottom"){guides(fill = guide_legend(nrow = 1, byrow = T),
                                             color = guide_legend(nrow = 1, byrow = T))}} +
     {if(any(gridlines %in% c("grid_y", "both"))){
-      theme(
-        panel.grid.major.y = element_line(color = 'grey'))}} + #,
+      theme(panel.grid.major.y = element_line(color = 'grey'))}} + #,
     {if(break_len == "4 years" & gridlines %in% c("grid_y", "both")){
       theme(panel.grid.minor.y = element_line(color = 'grey'))}} +
     {if(any(gridlines %in% c("grid_x", "both"))){
-      theme(
-        panel.grid.major.x = element_line(color = 'grey'))}} +#,
+      theme(panel.grid.major.x = element_line(color = 'grey'))}} +#,
     {if(break_len == "4 years" & gridlines %in% c("grid_x", "both")){
       theme(panel.grid.minor.x = element_line(color = 'grey'))}} +
     #panel.grid.minor.x = element_line(color = 'grey'))}} +
-    labs(y = "% of County in Drought", x = x_lab) +
-    scale_y_continuous(breaks = pretty(ddata3$Pct_Area, n = 8)) +
+    labs(y = y_lab, x = x_lab) +
+    scale_y_continuous(n.breaks = 5, expand = c(0,0), limits = c(0,100)) +
      # facets
     {if(facet_park){facet_wrap(~UnitCode)}} + #change to county
     {if(facet_county){facet_wrap(~County)}} +

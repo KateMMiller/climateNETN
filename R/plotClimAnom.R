@@ -298,7 +298,8 @@ anomplot <-
     theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
           legend.position = legend_position,
           legend.text = element_text(size = 10),
-          legend.title = element_text(size = 10)) +
+          legend.title = element_text(size = 10),
+          legend.margin = margin(0,0,0,0)) +
     {if(any(gridlines %in% c("grid_y", "both"))){
       theme(
         panel.grid.major.y = element_line(color = 'grey'))}} +

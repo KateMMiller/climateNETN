@@ -29,33 +29,22 @@ yr_current <- params$year_current
 child_env <- new.env()
 
 child_env$yr_current <- yr_current
-child_env$lnetn_list <- c("BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
+child_env$netn_list <- c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
 ```
 
-```{r results = 'asis', include = F}
-acad <- lapply(seq_along(c("ACAD")), function(x){
-  child_env$park = "ACAD"
-  knitr::knit_child("ACAD_summary.rmd", envir = child_env)
-  #knitr::knit_child("About_tabs.Rmd", envir = child_env)
-  })
-```
-```{r results = 'asis'}
-cat(unlist(acad), sep = "\n\n")
-```
-
-```{r results = 'asis', include = F}
-lnetn <- lapply(seq_along(child_env$lnetn_list), function(x){
-  child_env$park = child_env$lnetn_list[[x]]
-  knitr::knit_child("LNETN_park_summary.rmd", envir = child_env)
+```{r results = 'asis', include = F, cache = F}
+netn <- lapply(seq_along(child_env$netn_list), function(x){
+  child_env$park = child_env$netn_list[[x]]
+  knitr::knit_child("NETN_park_summary.rmd", envir = child_env)
   #knitr::knit_child("About_tabs.Rmd", envir = child_env)
   
 })
 ```
 ```{r results = 'asis'}
-cat(unlist(lnetn), sep = "\n\n")
+cat(unlist(netn), sep = "\n\n")
 ```
 
-## About the Parks
+## Map of Parks
 ```{r out.width="80%", message=F}
 NPSbasic <- "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
 
@@ -86,7 +75,7 @@ leaflet(height = 700) %>%
     # set default view of park
     setView(lng = long_cent,
             lat = lat_cent,
-            zoom = 6) %>% #bbox$Zoom[bbox$ParkCode == park]) %>%
+            zoom = 7) %>% #bbox$Zoom[bbox$ParkCode == park]) %>%
     # setMaxBounds(lng1 = bbox[bbox$ParkCode == parkcode,]$LongE,
     #              lng2 = bbox[bbox$ParkCode == parkcode,]$LongW,
     #              lat1 = bbox[bbox$ParkCode == parkcode,]$LatN,

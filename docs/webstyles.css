@@ -1,18 +1,21 @@
 /* Body and headers */
 .main-container{
-  /*max-width:1440px !important;*/
-  width: 100vw;
-  max-width: 98% !important;
-  /*height: 100vh;*/
+   /*display: flex;*/
+  max-width:1240px !important;
   margin-left: 0;
   margin-right: 0;
 }
 
 .container-fluid{
-  width: 95vw;
-  /*height: 100vh;*/
-  
+  /*display: flex;*/
+  width: 100vw;
+  height: 100vh;
+  position: relative;
 }
+
+/*@media(max-width:800px){*/
+/*  min-width: 50%;*/
+/*}*/
 
 .title{
  display:none;
@@ -22,7 +25,7 @@ body {
   font-family: "FrutigerLTStd-Black","Arial",Arial,sans-serif;
   font-size: 14px;
   color: black;
-  width:100vw;
+ /* width:100vw;*/
  /* height: 100vh;*/
 }
 
@@ -84,28 +87,29 @@ h5 {
 .banner{
   background: black !important;
   height: 105px;
-  width: 100vw;
+  width: 100%;
+  max-width: 1240px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .header{
  height: 100px;
- width: 98vw;
+ width: 98%;
  margin-left: auto;
  margin-right: auto;
 }
 
 #col-left-header{
   float:left;
-  width: 63vw;
+  width: 68%;
   padding: 5px 0 5px 0;
   margin-left: -5px;
 }
 
 #col-right-header{
   float:right;
-  width: 7vw;
+  width: 7%;
   padding-top: 5px 0px 5px 0;
   margin-right: 5px;
   margin-left: 0px;
@@ -114,7 +118,7 @@ h5 {
 #col-middle-header{
   float:left;
   /*text-align:left;*/
-  width: 20vw;
+  width: 25%;
   padding: 5px 0;
   margin-right: 0;
 }
@@ -136,8 +140,8 @@ h5 {
 }
 
 .section{
-  width:100vw;
-} 
+  width:100%;
+}
 
 /* Tabset pills */
 .nav>li>a {
@@ -151,7 +155,7 @@ h5 {
 }
 
 .nav-tabs{
-  max-width: 96vw;
+  max-width: 98%;
 }
 .nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
     color: #ffffff;
