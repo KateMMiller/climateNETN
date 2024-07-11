@@ -4,7 +4,7 @@
 #' @title plotClimComps: Plot climate comparisons
 #'
 #' @importFrom dplyr arrange filter left_join mutate
-#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom purrr map list_rbind
 #' @import ggplot2
 #'
@@ -145,6 +145,7 @@ plotClimComps <- function(park = "ACAD",
   clim_dat2 <- clim_dat |> filter(year %in% years) |> filter(month %in% months)
   clim_dat2$date <- as.Date(paste0(clim_dat2$year, "-", clim_dat2$month, "-", 15), format = "%Y-%m-%d")
 
+  #++++ I CAN PROBABLY SKIP THIS PART, NOW THAT ONLY 1 PARAM IS POSSIBLE, BUT HAVE TO UPDATE OTHER CODE TOO. +++
   clim_dat_long <-
       clim_dat2 |>
         select(UnitCode:month, date) |>
@@ -281,7 +282,7 @@ plotClimComps <- function(park = "ACAD",
 
   avg_name <- ifelse(normal == "norm20cent", "Climate baseline: 1901 - 2000", "Climate baseline: 1991 - 2020")
 
-  band_values <- c("d100" = "#DEDEDE", "d95" = "#B7B7B7", "d50" = "#878787")
+  band_values <- c("d100" = "#EDEDED", "d95" = "#D3D3D3", "d50" = "#AFAFAF")
 
   band_labels <-
       c("d100" = "Min/Max",
@@ -294,25 +295,25 @@ plotClimComps <- function(park = "ACAD",
   avg_dat_dist$distrib <- ifelse(grepl("min|max", avg_dat_dist$stat), "d100",
                                  paste0("d", gsub("\\D", "", avg_dat_dist$stat)) )
 
+  # Widen to have columns for lower and upper for bands
   avg_dat_dist_wide <- avg_dat_dist |> filter(norm == normal) |>
     select(-stat, -param_full) |>
     pivot_wider(names_from = metric_type, values_from = value)
 
-    avg_dat_dist_wide$distrib <- factor(avg_dat_dist_wide$distrib, levels = c("d100", "d95", "d50"))
+  avg_dat_dist_wide$distrib <- factor(avg_dat_dist_wide$distrib, levels = c("d100", "d95", "d50"))
 
   clim_plot <-
     ggplot() + theme_NETN() +
+    # layers for normals
     {if(include_error == TRUE){
       geom_ribbon(data = avg_dat_dist_wide,
                   aes(ymin = lower, ymax = upper, x = mon, fill = distrib, group = distrib))}} +
     {if(include_error == TRUE){scale_fill_manual(values = band_values, labels = band_labels, name = avg_name)}} +
-    {if(include_error == TRUE){
-      geom_line(data = avg_dat_norm,
-                aes(x = mon, y = value, group = metric_type, linetype = metric_type),
-                linewidth = 1)}} +       # line type for normal
-    {if(include_error == TRUE){
-      scale_linetype_manual(values = c("longdash"), name = NULL) }} + #}} +
-      # layers for annual data
+    geom_line(data = avg_dat_norm,
+              aes(x = mon, y = value, group = metric_type, linetype = metric_type),
+              linewidth = 1) +       # line type for normal
+    scale_linetype_manual(values = c("longdash"), name = NULL) +
+    # layers for annual data
       {if(any(layers %in% "lines"))
           geom_line(data = clim_dat_final,
                     aes(x = mon, y = value, group = as.integer(year), color = as.integer(year)),

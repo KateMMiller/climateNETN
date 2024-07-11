@@ -8,14 +8,17 @@ plotClimCumPrecip(
   park = "all",
   years = format(Sys.Date(), "\%Y"),
   months = 1:12,
+  layers = "lines",
   normal = "norm20cent",
   units = "sci",
-  palette = c("#7FC2F2", "#565656"),
+  palette = "viridis",
   plot_title = TRUE,
   title_type = "UnitCode",
   legend_position = "right",
   numcol = 3,
-  gridlines = "none"
+  gridlines = "none",
+  include_error = TRUE,
+  legend_row = 1
 )
 }
 \arguments{
@@ -37,6 +40,9 @@ plotClimCumPrecip(
 \item{years}{Numeric. Years to plot separately. Accepted values start at 2006.If multiple years
 specified, will facet results on year. Default is current year.}
 
+\item{layers}{Options are "points", "lines", "bars", or "area" for Annual Values.
+By default, only lines and points will plot. Bars or area should be selected on their own.}
+
 \item{normal}{Specify normals to plot. By default, the 20th century normal (1901-2000) plots.
 Other options include:
 \describe{
@@ -47,7 +53,8 @@ Other options include:
 \item{units}{Specify if you want Scientific or English units. Acceptable values are "sci" (default) and "eng".
 If "sci" precipitation units are mm; if "eng", precipitation units are in inches.}
 
-\item{palette}{Specify 2 colors, one for the bar plot and one for the line. Default is light blue and grey.}
+\item{palette}{Color palette for years. If only 1 color is specified and multiple years
+are specified, all will be the same color.}
 
 \item{plot_title}{Logical. If TRUE (default) prints park name at top of figure. If FALSE,
 does not print site name. Only enabled when one park is selected.}
@@ -62,6 +69,11 @@ Options are c("UnitCode", "UnitName").}
 are specified or multiple parks. Default is 3.}
 
 \item{gridlines}{Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")}
+
+\item{include_error}{Logical. If TRUE (default), plots min/max, 95\% and 50\% error bands around the normal.
+If FALSE, only plots the normal line.}
+
+\item{legend_row}{Integer. Specify number of rows to plot the legend. Default is 1.}
 }
 \value{
 Returns a ggplot object of specified climate trends

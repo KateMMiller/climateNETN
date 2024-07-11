@@ -135,7 +135,7 @@ names(NETN_clim_norms) <- gsub("tavg", "tmean", names(NETN_clim_norms))
 
 write.csv(NETN_clim_norms, "../data/NETN_clim_norms.csv")
 #usethis::use_data(NETN_clim_norms, overwrite = T)
-
+#data("NETN_clim_norms")
 head(NETN_clim_norms)
 #---- Compile error around normals ----
 #library(raster) # for historic grids
@@ -172,14 +172,14 @@ years <- 1991:2020
 months <- 1:12
 yrmon <- expand.grid(year = years, mon =  months)
 
-netn_annual <- purrr::map2(yrmon$year, yrmon$mon, function(x, y){
+netn_ann_30yr <- purrr::map2(yrmon$year, yrmon$mon, function(x, y){
   compnoaa(yr = x, mon = y)}, .progress = T) |> list_rbind()
 
-names(netn_annual) <- gsub("prcp", "ppt", names(netn_annual))
-names(netn_annual) <- gsub("tavg", "tmean", names(netn_annual))
-head(netn_annual)
+names(netn_ann_30yr) <- gsub("prcp", "ppt", names(netn_ann_30yr))
+names(netn_ann_30yr) <- gsub("tavg", "tmean", names(netn_ann_30yr))
+head(netn_ann_30yr)
 
-netn_sum_1991_2020 <- netn_annual |> group_by(UnitCode, month) |>
+netn_sum_1991_2020 <- netn_ann_30yr |> group_by(UnitCode, month) |>
   summarize(ppt_min_1991_2020 = min(ppt),
             ppt_max_1991_2020 = max(ppt),
             ppt_u95_1991_2020 = quantile(ppt, 0.975),
@@ -206,20 +206,32 @@ netn_sum_1991_2020 <- netn_annual |> group_by(UnitCode, month) |>
             tmax_l50_1991_2020 = quantile(tmax, 0.25),
             .groups = 'drop')
 
-head(netn_sum_1991_2020)
+netn_cumppt_1991_2020 <- netn_ann_30yr |> group_by(UnitCode, year) |> mutate(ppt_cum = cumsum(ppt)) |>
+  group_by(UnitCode, month) |>
+  summarize(pptcum_norm_1991_2020 = mean(ppt_cum),
+            pptcum_min_1991_2020 = min(ppt_cum),
+            pptcum_max_1991_2020 = max(ppt_cum),
+            pptcum_u95_1991_2020 = quantile(ppt_cum, 0.975),
+            pptcum_l95_1991_2020 = quantile(ppt_cum, 0.025),
+            pptcum_u50_1991_2020 = quantile(ppt_cum, 0.75),
+            pptcum_l50_1991_2020 = quantile(ppt_cum, 0.25),
+            .groups = 'drop')
+
+
+
 #------ 1901-2000 Error------
 years <- 1901:2000
 months <- 1:12
 yrmon <- expand.grid(year = years, mon =  months)
 
-netn_annual <- purrr::map2(yrmon$year, yrmon$mon, function(x, y){
+netn_ann_20th <- purrr::map2(yrmon$year, yrmon$mon, function(x, y){
   compnoaa(yr = x, mon = y)}, .progress = T) |> list_rbind()
 
-names(netn_annual) <- gsub("prcp", "ppt", names(netn_annual))
-names(netn_annual) <- gsub("tavg", "tmean", names(netn_annual))
-head(netn_annual)
+names(netn_ann_20th) <- gsub("prcp", "ppt", names(netn_ann_20th))
+names(netn_ann_20th) <- gsub("tavg", "tmean", names(netn_ann_20th))
+head(netn_ann_20th)
 
-netn_sum_1901_2000 <- netn_annual |> group_by(UnitCode, month) |>
+netn_sum_1901_2000 <- netn_ann_20th |> group_by(UnitCode, month) |>
   summarize(ppt_min_1901_2000 = min(ppt),
             ppt_max_1901_2000 = max(ppt),
             ppt_u95_1901_2000 = quantile(ppt, 0.975),
@@ -246,10 +258,23 @@ netn_sum_1901_2000 <- netn_annual |> group_by(UnitCode, month) |>
             tmax_l50_1901_2000 = quantile(tmax, 0.25),
             .groups = 'drop')
 
-df_list <- list(NETN_clim_norms, netn_sum_1901_2000, netn_sum_1991_2020)
+netn_cumppt_1901_2020 <- netn_ann_20th |> group_by(UnitCode, year) |> mutate(ppt_cum = cumsum(ppt)) |>
+  group_by(UnitCode, month) |>
+  summarize(pptcum_norm_1901_2000 = mean(ppt_cum),
+            pptcum_min_1901_2000 = min(ppt_cum),
+            pptcum_max_1901_2000 = max(ppt_cum),
+            pptcum_u95_1901_2000 = quantile(ppt_cum, 0.975),
+            pptcum_l95_1901_2000 = quantile(ppt_cum, 0.025),
+            pptcum_u50_1901_2000 = quantile(ppt_cum, 0.75),
+            pptcum_l50_1901_2000 = quantile(ppt_cum, 0.25),
+            .groups = 'drop')
+
+
+df_list <- list(NETN_clim_norms, netn_sum_1901_2000, netn_cumppt_1901_2020,
+                netn_sum_1991_2020, netn_cumppt_1991_2020)
 NETN_clim_comb1 <- purrr::reduce(df_list, left_join, by = c("UnitCode", "month"))
 
 # dropping the std columns for now, though code above extracted them.
-names(NETN_clim_comb)
 NETN_clim_norms <- NETN_clim_comb1[,-grep("std", colnames(NETN_clim_comb1))]
+names(NETN_clim_norms)
 usethis::use_data(NETN_clim_norms, overwrite = T)

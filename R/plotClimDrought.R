@@ -46,6 +46,8 @@
 #' @param plot_title Logical. If TRUE (default) prints site name at top of figure. If FALSE,
 #' does not print site name. Only enabled when one site is selected.
 #'
+#' @param legend_row Integer. Specify number of rows to plot the legend. Default is 1.
+#'
 #' @return Returns a ggplot object of specified drought trends
 #'
 #' @examples
@@ -70,7 +72,7 @@ plotClimDrought <- function(park = "all",
                             years = format(Sys.Date(), format = "%Y"),
                             months = 1:12, dom_county = TRUE,
                             legend_position = 'right', plot_title = TRUE,
-                            gridlines = 'none'){
+                            gridlines = 'none', legend_row = 1){
 
   #--- error handling ---
   park <- match.arg(park, several.ok = TRUE,
@@ -83,7 +85,7 @@ plotClimDrought <- function(park = "all",
   stopifnot(class(plot_title) == "logical")
   stopifnot(class(dom_county) == "logical")
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
-
+  stopifnot(class(legend_row) %in% c("numeric", "integer"), legend_row > 0)
   # Need to include park to get fips code
   ddata <- getClimDrought(park = park, years = years, dom_county = dom_county) |>
     mutate(dom_county = case_when(UnitCode == "ACAD" & County == "Knox County" ~ FALSE,
@@ -174,7 +176,9 @@ plotClimDrought <- function(park = "all",
      # facets
     {if(facet_park){facet_wrap(~UnitCode)}} + #change to county
     {if(facet_county){facet_wrap(~County)}} +
-    {if(facet_park_county){facet_wrap(~UnitCode + County)}}
+    {if(facet_park_county){facet_wrap(~UnitCode + County)}} +
+    guides(color = guide_legend(nrow = legend_row),
+           fill = guide_legend(nrow = legend_row))
 
   return(dplot)
 
