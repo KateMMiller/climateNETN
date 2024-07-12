@@ -231,7 +231,7 @@ plotClimComps <- function(park = "ACAD",
 
   avg_dat3 <- if(units == "sci"){avg_dat_long
   } else {
-    avg_dat_long |> mutate(param = if(grepl("ppt", parameter)){value/25.4} else {(value * 9/5) + 32})
+    avg_dat_long |> mutate(value = if(grepl("ppt", parameter)){value/25.4} else {(value * 9/5) + 32})
   }
 
   avg_dat3$mon <- factor(avg_dat3$month,
@@ -247,7 +247,7 @@ plotClimComps <- function(park = "ACAD",
                                  paste0("d", gsub("\\D", "", avg_dat_dist$stat)) )
 
   avg_dat_dist_wide <- avg_dat_dist |> dplyr::filter(norm == normal) |>
-    dplyr::select(-stat, -param_full, -param) |>
+    dplyr::select(-stat, -param_full) |>
     pivot_wider(names_from = metric_type, values_from = value)
 
   avg_dat_dist_wide$distrib <- factor(avg_dat_dist_wide$distrib, levels = c("d100", "d95", "d50"))
