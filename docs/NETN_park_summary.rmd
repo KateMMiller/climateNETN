@@ -60,7 +60,8 @@ drgt_capT <- paste0("Long-term trends (2000:", yr_current, ") in weekly drought 
 <details open><summary class='drop'>Temperature</summary>
 ```{r fig.height=7, fig.width=13, results = 'asis', fig.cap = anom_comp_cap1}
 temp_comp <- plotClimComps(park = parkcode, years = yr_current, palette = 'red', parameter = c('tmean'),
-                           legend_position = 'bottom', plot_title = F, units = "eng")
+                           legend_position = 'bottom', plot_title = F, units = "eng", 
+                           layers = c("points", "lines"), legend_row = 2)
 temp_anom <- plotClimAnom(park = parkcode, years = yr_current, parameter = 'tmean',
                           legend_position = 'bottom', units = "eng")
 grid.arrange(temp_comp, temp_anom, nrow = 1)
@@ -73,7 +74,8 @@ grid.arrange(temp_comp, temp_anom, nrow = 1)
 <details open><summary class='drop'>Precipitation</summary>
 ```{r fig.height=7, fig.width=13, results = 'asis', fig.cap = anom_comp_cap1}
 ppt_comp <- plotClimComps(park = park,years= yr_current, palette = 'blue', parameter = c('ppt'),
-                           legend_position = "bottom", plot_title = F, units = "eng")
+                           legend_position = "bottom", plot_title = F, units = "eng", 
+                          layers = c("points", "lines"), legend_row = 2)
 ppt_anom <- plotClimAnom(park = parkcode, years = yr_current, parameter = 'ppt_pct',
                           legend_position = "bottom")
 grid.arrange(ppt_comp, ppt_anom, nrow = 1)
@@ -84,8 +86,11 @@ grid.arrange(ppt_comp, ppt_anom, nrow = 1)
 <br>
 <details open><summary class='drop'>Drought Condition</summary>
 ```{r fig.height=7, fig.width=13, results = 'asis', fig.cap = drgt_cumppt_cap1}
-drgt <- plotClimDrought(park = parkcode, years = yr_current, legend_position = 'bottom', legend_row = 2)
-pptcum <- plotClimCumPrecip(park = parkcode, years = yr_current, legend_position = "bottom", palette = "dodgerblue", layers = c("points", "lines"), legend_row = 1)
+drgt <- plotClimDrought(park = parkcode, years = yr_current, 
+                        legend_position = 'bottom', legend_row = 2)
+pptcum <- plotClimCumPrecip(park = parkcode, years = yr_current, 
+                            legend_position = "bottom", palette = "#1e90ff", 
+                            layers = c("points", "lines"), legend_row = 2) 
 cat("\n\n")
 grid.arrange(drgt, pptcum, nrow = 1)
 cat("\n\n")
@@ -118,7 +123,7 @@ plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'ppt_pct',
 
 <details open><summary class='drop'>Cumulative Precipitation</summary>
 ```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = cum_cap5}
-plotClimCumPrecip(park = parkcode, years = yr1:yr_current, legend_position = "bottom", units = "eng", palette = "dodgerblue", layers = c("points", "lines"))
+plotClimCumPrecip(park = parkcode, years = yr1:yr_current, legend_position = "bottom", units = "eng", palette = "#1e90ff", layers = c("points", "lines"))
 
 #cat(cum_cap5, "\n\n")
 

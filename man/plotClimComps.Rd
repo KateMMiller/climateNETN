@@ -18,6 +18,7 @@ plotClimComps(
   legend_position = "right",
   gridlines = "none",
   include_error = TRUE,
+  legend_row = 1,
   ...
 )
 }
@@ -82,6 +83,8 @@ specify 1 color}
 
 \item{include_error}{Logical. If TRUE (default), plots min/max, 95\% and 50\% error bands around the normal.
 If FALSE, only plots the normal line.}
+
+\item{legend_row}{Integer. Specify number of rows to plot the legend. Default is 1.}
 
 \item{...}{Additional arguments relevant to \code{sumClimAvgs()} or \code{sumClimMonthly()}}
 }

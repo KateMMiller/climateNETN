@@ -279,15 +279,16 @@ anomplot <-
                          color = factor(anom_type),
                          group = factor(anom_type))) +
     geom_bar(stat = 'identity', alpha = 0.4, lwd = 0.05) +
-    scale_color_manual(values = c("above" = palette[1], "below" =  palette[2]),
+    scale_color_manual(values = c("above" = palette[1],
+                                  "below" =  palette[2]),
                       labels = c("above" = above_label,
                                  "below" = below_label),
                       aesthetics = c("color", "fill"),
-                      name = NULL) +
+                      name = NULL, drop = FALSE) +
     geom_hline(aes(yintercept = 0, linetype = "Baseline")) +
     scale_linetype_manual(values = c("Baseline" = "solid"),
                           labels = c("Baseline" = avglabel),
-                          name = NULL) +
+                          name = NULL, drop = F) +
     # facets
     {if(facetparam == FALSE & facetpark == TRUE){facet_wrap(~park_facet)}} +
     {if(facetparam == TRUE & facetpark == FALSE){facet_wrap(~param_label, scales = facet_y)}} +

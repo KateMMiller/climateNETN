@@ -7,11 +7,10 @@
 plotClimCumPrecip(
   park = "all",
   years = format(Sys.Date(), "\%Y"),
-  months = 1:12,
   layers = "lines",
   normal = "norm20cent",
   units = "sci",
-  palette = "viridis",
+  palette = "#1e90ff",
   plot_title = TRUE,
   title_type = "UnitCode",
   legend_position = "right",
@@ -90,8 +89,9 @@ plots will be faceted on those variables.
 plotClimCumPrecip(park = "ACAD", years = 2020:2023, legend_position = 'bottom',
                  gridlines = "grid_y", units = 'eng')
 
-# Plot ACAD cumulative precipitation for 2013 through 2023 for April - October only
-plotClimCumPrecip(park = "ACAD", years = 2014:2024, legend_position = 'bottom', months = 4:10)
+# Plot ACAD cumulative precipitation for 2014 through 2024 with legend 2 rows and points and lines
+plotClimCumPrecip(park = "ACAD", years = 2014:2024, legend_position = 'bottom', legend_row = 2,
+layers = c("points", "lines"))
 
 # Plot all but SAIR cumulative precipitation for 2023 with 4 columns
 parks <- c("ACAD", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SARA", "WEFA")

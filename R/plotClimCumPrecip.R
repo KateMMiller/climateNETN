@@ -75,8 +75,9 @@
 #' plotClimCumPrecip(park = "ACAD", years = 2020:2023, legend_position = 'bottom',
 #'                  gridlines = "grid_y", units = 'eng')
 #'
-#' # Plot ACAD cumulative precipitation for 2013 through 2023 for April - October only
-#' plotClimCumPrecip(park = "ACAD", years = 2014:2024, legend_position = 'bottom', months = 4:10)
+#' # Plot ACAD cumulative precipitation for 2014 through 2024 with legend 2 rows and points and lines
+#' plotClimCumPrecip(park = "ACAD", years = 2014:2024, legend_position = 'bottom', legend_row = 2,
+#' layers = c("points", "lines"))
 #'
 #' # Plot all but SAIR cumulative precipitation for 2023 with 4 columns
 #' parks <- c("ACAD", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SARA", "WEFA")
@@ -91,11 +92,10 @@
 #'
 plotClimCumPrecip <- function(park = "all",
                         years = format(Sys.Date(), "%Y"),
-                        months = 1:12,
                         layers = "lines",
                         normal = "norm20cent",
                         units = "sci",
-                        palette = "viridis",
+                        palette = "#1e90ff",
                         plot_title = TRUE,
                         title_type = "UnitCode",
                         legend_position = 'right',
@@ -112,7 +112,6 @@ plotClimCumPrecip <- function(park = "all",
                                   "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
   if(any(park == "LNETN")){park = c("MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
   stopifnot(class(years) %in% c("numeric", "integer"), years >= 2006)
-  stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
   legend_position <- match.arg(legend_position, c("none", "bottom", "top", "right", "left"))
   stopifnot(class(plot_title) == "logical")
   normal <- match.arg(normal, c("norm20cent", "norm1990"))
@@ -120,7 +119,6 @@ plotClimCumPrecip <- function(park = "all",
   title_type <- match.arg(title_type, c("UnitCode", "UnitName"))
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
   units <- match.arg(units, c("sci", "eng"))
-  #if(all(!palette %in% c("viridis", "magma", "plasma", "turbo")) & length(years) > 1){stopifnot(length(palette) > 1)}
   stopifnot(class(include_error) == 'logical')
   layers <- match.arg(layers, c("points", "lines", "area", "bars"), several.ok = TRUE)
   stopifnot(class(legend_row) %in% c("numeric", "integer"), legend_row > 0)
@@ -130,15 +128,17 @@ plotClimCumPrecip <- function(park = "all",
   data("NETN_clim_annual")
   data("NETN_clim_norms")
 
+  months = 1:12 # Cum only really works when all months included
   clim_dat1 <- NETN_clim_annual |> filter(UnitCode %in% park) |>
     dplyr::select(UnitCode, UnitName, ppt, year, month)
-  clim_dat2 <- clim_dat1 |> filter(year %in% years) |> filter(month %in% months)
+  clim_dat2 <- clim_dat1 |> filter(year %in% years)
   clim_dat2$date <- as.Date(paste0(clim_dat2$year, "-", clim_dat2$month, "-", 15), format = "%Y-%m-%d")
 
   # Update clim data if requesting a year x month combination that is not currently in
   # the saved NETN_clim_annual.rda but only for complete months
   date_range_data <- sort(unique(clim_dat2$date))
-  date_range_fxn <- paste0(rep(years, length(months)),"-", rep(sprintf("%02d", months), length(years)), "-", 15)
+  date_range_fxn <- paste0(rep(years, length(months)),"-",
+                           rep(sprintf("%02d", months), length(years)), "-", 15)
   new_dates1 <- date_range_fxn[!date_range_fxn %in% date_range_data]
 
   # latest date of complete month
@@ -207,9 +207,9 @@ plotClimCumPrecip <- function(park = "all",
     avg_dat_long |> mutate(value = value/25.4)
   }
 
-  avg_dat3$mon <- factor( avg_dat3$month,
-                          levels = unique( avg_dat3$month),
-                          labels = unique(month.abb[ avg_dat3$month]), ordered = T)
+  avg_dat3$mon <- factor(avg_dat3$month,
+                         levels = unique( avg_dat3$month),
+                         labels = unique(month.abb[ avg_dat3$month]), ordered = T)
 
   # Split norm from distribs.
   avg_dat_norm <- avg_dat3 |> filter(stat == "norm")
@@ -233,14 +233,17 @@ plotClimCumPrecip <- function(park = "all",
   ylabel = paste0("Cumulative Monthly Precip. (", units_ppt, ")")
 
 
-  clim_curr_final$park_facet <- if(title_type == "UnitCode"){clim_curr_final$UnitCode} else {clim_curr_final$UnitName}
+  clim_curr_final$park_facet <- if(title_type == "UnitCode"){clim_curr_final$UnitCode
+    } else {clim_curr_final$UnitName}
 
   facet_park <- ifelse(length(park) > 1, TRUE, FALSE)
   facet_year <- ifelse(length(years) > 1, TRUE, FALSE)
 
   xaxis_breaks <- month.abb[months]
 
-  avg_name <- ifelse(normal == "norm20cent", "20th Century Baseline", "30 year Baseline")
+  avg_name <- ifelse(normal == "norm20cent",
+                     "Climate Baseline: 1901 - 2000",
+                     "Climate Baseline: 1991 - 2020")
 
   year_breaks = unique(clim_curr_final$year)
 
@@ -256,7 +259,7 @@ plotClimCumPrecip <- function(park = "all",
       "d95" = "95% range",
       "d50" = "50% range",
       "Average" = "Average")#,
-      #"Current Year" = "Current Year")
+#      "Current Year" = "Current Year")
 
   clim_curr_final$grp <- "Current Year"
   avg_dat_dist_wide$grp <- avg_dat_dist_wide$distrib
@@ -267,11 +270,11 @@ plotClimCumPrecip <- function(park = "all",
     {if(all(layers == "bars")){
       geom_bar(data = clim_curr_final, stat = 'identity',
                aes(y = cum_ppt_curr, x = mon, fill = grp),
-               alpha = 0.8)}} +
+               alpha = 0.8, fill = palette)}} +
     {if(all(layers == "area")){
       geom_ribbon(data = clim_curr_final,
                   aes(ymin = 0, ymax = cum_ppt_curr, x = mon,
-                      fill = grp))}} +
+                      fill = grp), fill = palette)}} +
     # normal ribbons
     {if(include_error == TRUE){
       geom_ribbon(data = avg_dat_dist_wide,
@@ -282,21 +285,23 @@ plotClimCumPrecip <- function(park = "all",
               aes(x = mon, y = value,
                   linetype = grp,
                   color = grp),
-              linewidth = 1, color = 'black') +
+              linewidth = 1, linetype = "longdash") +
     # layers for annual data
     {if(any(layers %in% "lines")){
       geom_line(data = clim_curr_final,
                 aes(y = cum_ppt_curr, x = mon, color = grp, linetype = grp),
-                lwd = 0.7, color = palette)}} +
+                lwd = 1, color = palette)}} +
     {if(any(layers %in% "points")){
       geom_point(data = clim_curr_final, #shape = 21,
-                aes(y = cum_ppt_curr, x = mon, color = grp),
-                color = palette, show.legend = F)}} +
+                aes(y = cum_ppt_curr, x = mon, color = grp, fill = grp, shape = grp),
+                color = palette, fill = palette, size = 2.5)}} +
     # manual scaling
-    scale_fill_manual(values = band_values, labels = band_labels, name = avg_name) +
-    #scale_shape_manual(values = band_shapes, labels = band_labels, name = NULL) +
+    scale_color_manual(values = band_values, labels = band_labels,
+                       name = avg_name, guide = 'legend',
+                       aesthetics = c("fill", "color")) +
+    scale_shape_manual(values = 21, labels = "Current Year", name = NULL) +
     #scale_color_manual(values = band_values, labels = band_labels, name = NULL) +
-    scale_linetype_manual(values = c("longdash", "solid"), name = NULL) +
+    #scale_linetype_manual(values = c("longdash", "solid"), labels = waiver(), name = NULL) +
     # facets
     {if(facet_year == FALSE & facet_park == TRUE){facet_wrap(~park_facet, ncol = numcol)}} +
     {if(facet_year == TRUE & facet_park == FALSE){facet_wrap(~year, ncol = numcol)}} +
@@ -315,18 +320,21 @@ plotClimCumPrecip <- function(park = "all",
             legend.text = element_text(size = 9),
             legend.title = element_text(size = 9),
             legend.margin = margin(0,0,0,0),
-            legend.key.size = unit(1, "cm")) +
-    # {if(any(layers %in% c("bars", "area"))){
-    #   guides(color = guide_legend(order = 2),
-    #          fill = guide_legend(order = 3),
-    #          linetype = guide_legend(order = 1))}} +
+            legend.key.width = unit(0.85, "cm")
+            ) +
+    {if(any(layers %in% c("bars", "area"))){
+      guides(color = guide_legend(order = 2),
+             fill = guide_legend(order = 3),
+             linetype = guide_legend(order = 1))}} +
     {if(any(layers %in% c("points", "lines"))){
     guides(
-           fill = guide_legend(order = 4),
-           color = guide_legend(order = 3),
-           linetype = guide_legend(order = 1))}} +
-    guides(linetype = guide_legend(nrow = legend_row),
-           color = guide_legend(nrow = legend_row))
+           fill = guide_legend(order = 0),
+           color = guide_legend(order = 0),
+           #shape = guide_legend(order = 4),
+           linetype = guide_legend(order = 0))}} +
+    guides(#linetype = guide_legend(keywidth = unit(5, "cm")),
+           color = guide_legend(nrow = legend_row),
+           fill = guide_legend(nrow = legend_row))
 
   return(#suppressWarnings(
     pptplot
