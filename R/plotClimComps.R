@@ -30,7 +30,7 @@
 #' \item{"SARA"}{Saratoga NHP only}
 #' \item{"WEFA"}{Weir Farm NHP only}}
 #'
-#' @param years Numeric. Years to plot separately. Accepted values start at 2006.
+#' @param years Numeric. Years to plot separately. Accepted values start at 1895.
 #'
 #' @param months Vector of numeric months to query. If specifying new months not yet included in
 #' NETN_clim_annual dataset, will download months that are available from NOAA.
@@ -126,7 +126,7 @@ plotClimComps <- function(park = "ACAD",
                       "ACAD", "BOHA", "MABI", "MIMA", "MORR",
                       "ROVA", "SAGA", "SAIR", "SARA", "WEFA"))
   #if(any(park == "LNETN")){park = c("MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
-  stopifnot(class(years) %in% c("numeric", "integer"), years >= 2006)
+  stopifnot(class(years) %in% c("numeric", "integer"), years >= 1895)
   parameter <- match.arg(parameter, c("tmean", "tmax", "tmin", "ppt"))
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
   layers <- match.arg(layers, c("points", "lines"), several.ok = TRUE)
@@ -156,7 +156,7 @@ plotClimComps <- function(park = "ACAD",
   # Update clim data if requesting a year x month combination that is not currently in
   # the saved NETN_clim_annual.rda but only for complete months
   date_range_data <- sort(unique(clim_dat2$date))
-  date_range_fxn <- paste0(rep(years, length(months)),"-",
+  date_range_fxn <- paste0(rep(years, each = length(months)),"-",
                            rep(sprintf("%02d", months), length(years)), "-", 15)
   new_dates1 <- date_range_fxn[!date_range_fxn %in% date_range_data]
 

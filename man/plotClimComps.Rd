@@ -38,7 +38,7 @@ plotClimComps(
 \item{"SARA"}{Saratoga NHP only}
 \item{"WEFA"}{Weir Farm NHP only}}}
 
-\item{years}{Numeric. Years to plot separately. Accepted values start at 2006.}
+\item{years}{Numeric. Years to plot separately. Accepted values start at 1895.}
 
 \item{months}{Vector of numeric months to query. If specifying new months not yet included in
 NETN_clim_annual dataset, will download months that are available from NOAA.}

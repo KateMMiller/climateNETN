@@ -144,7 +144,7 @@ plotClimTrend <- function(park = "all",
   # Update clim data if requesting a year x month combination that is not currently in
   # the saved NETN_clim_2006_2024.rda but only for complete months
   date_range_data <- sort(unique(clim_dat_long$date))
-  date_range_fxn <- paste0(rep(years, length(months)),"-", rep(sprintf("%02d", months), length(years)), "-", 15)
+  date_range_fxn <- paste0(rep(years, each = length(months)),"-", rep(sprintf("%02d", months), length(years)), "-", 15)
   new_dates1 <- date_range_fxn[!date_range_fxn %in% date_range_data]
 
   # latest date of complete month
