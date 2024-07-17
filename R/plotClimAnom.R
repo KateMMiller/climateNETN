@@ -314,7 +314,7 @@ anomplot <-
     scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format)) +
    {if(!parameter %in% "ppt_pct")
      scale_y_continuous(n.breaks = 8, limits = yrange,
-                        sec.axis = dup_axis(name = NULL, breaks = 0, labels = "Average")) }  +
+                        sec.axis = dup_axis(name = NULL, breaks = 0, labels = "Average  ")) }  +
    {if(parameter %in% "ppt_pct")
       scale_y_continuous(n.breaks = 8, limits = yrange,
         sec.axis = dup_axis(name = NULL, breaks = ybreaks_pct$pct, labels = ybreaks_pct$label))} +
