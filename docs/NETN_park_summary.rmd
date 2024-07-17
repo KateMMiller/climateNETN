@@ -77,7 +77,7 @@ ppt_comp <- plotClimComps(park = park,years= yr_current, palette = 'blue', param
                            legend_position = "bottom", plot_title = F, units = "eng", 
                           layers = c("points", "lines"), legend_row = 2)
 ppt_anom <- plotClimAnom(park = parkcode, years = yr_current, parameter = 'ppt_pct',
-                          legend_position = "bottom")
+                          legend_position = "bottom", palette = c("#1e90ff", "#7F6748"))
 grid.arrange(ppt_comp, ppt_anom, nrow = 1)
 
 #cat(anom_comp_cap1, "\n\n")
@@ -121,21 +121,22 @@ plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'ppt_pct',
 </details>
 <br>
 
+<details open><summary class='drop'>Drought Condition</summary>
+```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = drgt_cap5}
+plotClimDrought(park = parkcode, years = yr1:yr_current, gridlines = "grid_x", 
+                legend_position = "bottom")
+#cat(drgt_cap5, "\n\n")
+```
+</details>
+</br>
+
+
 <details open><summary class='drop'>Cumulative Precipitation</summary>
 ```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = cum_cap5}
 plotClimCumPrecip(park = parkcode, years = yr1:yr_current, legend_position = "bottom", units = "eng", palette = "#1e90ff", layers = c("points", "lines"))
 
 #cat(cum_cap5, "\n\n")
 
-```
-</details>
-</br>
-
-<details open><summary class='drop'>Drought Condition</summary>
-```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = drgt_cap5}
-plotClimDrought(park = parkcode, years = yr1:yr_current, gridlines = "grid_x", 
-                legend_position = "bottom")
-#cat(drgt_cap5, "\n\n")
 ```
 </details>
 </br>
@@ -166,7 +167,7 @@ plotClimAnom(park = parkcode, years = 1900:yr_current,
 
 <details open><summary class='drop'>Precipitation Trends</summary>
 ```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = ppt_capT}
-plotClimTrend(park = parkcode, years = 1900:yr_current, 
+plotClimTrend(park = parkcode, years = 1900:yr_current,
               parameter = c("ppt"), facet_param = F, plot_se = T,
               palette = "Dark2", legend_position = "bottom", 
               layers = "smooth", gridlines = "grid_x", units = "eng")
