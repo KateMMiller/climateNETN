@@ -47,7 +47,7 @@ drgt_cap5 <- paste0("Last 5 years (", yr5, ":", yr_current, ") of weekly drought
 
 temp_capT <- paste0("5-year rolling average annual minimum, maximum, and average temperature trends from 1900 to ", yr_current, " by month derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
 
-ppt_capT <- paste0("5-year rolling average annual total precipitation trends by month from 1900 to ", yr_current, " derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
+ppt_capT <- paste0("5-year rolling average annual total precipitation trends from 1900 to ", yr_current, " derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
 
 anom_capT <- paste0("Monthly deviations from historic baselines, with positive (red) bars, indicated above average deviations, and negative (blue) bars indicating below average deviations for 1900 to ", yr_current, ". Historic baselines are based on <a href='https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals'>NOAA 20th century normals</a> for a given park's geographic centroid. Monthly data are derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
 
