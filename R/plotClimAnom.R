@@ -37,7 +37,7 @@
 #' If specifying new months not yet included in NETN_clim_annual dataset, will
 #' download months that are available from NOAA.
 #'
-#' @param parameter Specify the monthly averaged parameter to plot. Acceptable values are
+#' @param parameter Specify the monthly averaged parameter to plot. Only 1 can be selected at a time. Acceptable values are:
 #' \describe{
 #' \item{"tmean"}{Plot mean temperature comparisons.}
 #' \item{"tmax"}{Plot max temperature comparisons.}
@@ -105,7 +105,7 @@ plotClimAnom <- function(park = "all",
   } else {park}
   stopifnot(class(years) %in% c("numeric", "integer"), years >= 1895)
 
-  parameter <- match.arg(parameter, c("tmean", "tmax", "tmin", "ppt", "ppt_pct"), several.ok = TRUE)
+  parameter <- match.arg(parameter, c("tmean", "tmax", "tmin", "ppt", "ppt_pct"))
   normal <- match.arg(normal, c("norm20cent", "norm1990"))
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
   legend_position <- match.arg(legend_position, c("none", "bottom", "top", "right", "left"))
@@ -131,7 +131,6 @@ plotClimAnom <- function(park = "all",
 
   avg_dat <- NETN_clim_norms |> filter(UnitCode %in% park) #|> filter(month %in% months)
 
-
   # Only need norms for this plotting function, so dropping error cols
   avg_dat_cols <- c("UnitCode", "UnitName", "month", names(avg_dat[,grep("norm", names(avg_dat))]))
   avg_dat1 <- avg_dat[,avg_dat_cols]
@@ -148,7 +147,7 @@ plotClimAnom <- function(park = "all",
   # Update clim data if requesting a year x month combination that is not currently in
   # the saved NETN_clim_2006_2024.rda but only for complete months
   date_range_data <- sort(unique(clim_dat_long$date))
-  date_range_fxn <- paste0(rep(years, length(months)),"-", rep(sprintf("%02d", months), length(years)), "-", 15)
+  date_range_fxn <- paste0(rep(years, each = length(months)),"-", rep(sprintf("%02d", months), length(years)), "-", 15)
   new_dates1 <- date_range_fxn[!date_range_fxn %in% date_range_data]
 
   # latest date of complete month
@@ -203,13 +202,10 @@ plotClimAnom <- function(park = "all",
                             anom = value - avg)
       }
 
-  param <- if(any(parameter == "all")){c("ppt", "tmean", "tmax", "tmin")} else {parameter}
-
   #-- Set up plotting features --
   ylab <- ifelse(length(unique(clim_comb1$param)) == 1, unique(clim_comb1$param), "Monthly Value")
 
   facetpark <- ifelse(length(unique(clim_comb1$UnitCode)) > 1, TRUE, FALSE)
-  facetparam <- ifelse(length(parameter) > 1, TRUE, FALSE)
   facet_y <- if(length(parameter) > 1 & any(parameter %in% c("ppt", "ppt_pct"))){"free_y"} else {"fixed"}
 
   clim_comb1$park_facet <- if(title_type == "UnitCode"){clim_comb1$UnitCode} else {clim_comb1$UnitName}
@@ -272,6 +268,15 @@ plotClimAnom <- function(park = "all",
   below_label <- if(year_len == 1){paste0("Below baseline for ", years)} else {"Below baseline"}
   avglabel <- ifelse(normal == "norm20cent", "Baseline: 1901 - 2000", "Baseline: 1991 - 2020")
 
+  yrange <- if(parameter == "ppt_pct"){
+    c(-100, max(clim_comb4$anom))
+  } else {c(-max(clim_comb4$anom), max(clim_comb4$anom))}
+
+  ybreaks_pct1 = data.frame(pct = c(-100, 0, 100, 200, 300, 400, 500),
+                            label = c("No precip", "Avg. Precip", "2x Avg.", "3x Avg.", "4x Avg.", "5x Avg.", "6x Avg.")
+                            )
+  ybreaks_pct <- ybreaks_pct1[ybreaks_pct1$pct < max(clim_comb4$anom),]
+
 
 anomplot <-
   ggplot(clim_comb4, aes(x = date2, y = anom,
@@ -290,9 +295,7 @@ anomplot <-
                           labels = c("Baseline" = avglabel),
                           name = NULL, drop = F) +
     # facets
-    {if(facetparam == FALSE & facetpark == TRUE){facet_wrap(~park_facet)}} +
-    {if(facetparam == TRUE & facetpark == FALSE){facet_wrap(~param_label, scales = facet_y)}} +
-    {if(facetparam == TRUE & facetpark == TRUE){facet_wrap(~park_facet + param_label)}} +
+    {if(facetpark == TRUE){facet_wrap(~park_facet)}} +
     # labels/themes
     theme_NETN() +
     labs(x = NULL, y = ylabel) +
@@ -309,14 +312,20 @@ anomplot <-
         panel.grid.major.x = element_line(color = 'grey'))}} +
     # Axes
     scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format)) +
-    scale_y_continuous(n.breaks = 8, limits = c(-max(clim_comb4$anom), max(clim_comb4$anom))) +
+   {if(!parameter %in% "ppt_pct")
+     scale_y_continuous(n.breaks = 8, limits = yrange,
+                        sec.axis = dup_axis(name = NULL, breaks = 0, labels = "Average")) }  +
+   {if(parameter %in% "ppt_pct")
+      scale_y_continuous(n.breaks = 8, limits = yrange,
+        sec.axis = dup_axis(name = NULL, breaks = ybreaks_pct$pct, labels = ybreaks_pct$label))} +
     # Legend order
     guides(linetype = guide_legend(order = 2),
            fill = guide_legend(order = 1),
            color = guide_legend(order = 1))
 
-   return(#suppressWarnings(
-    anomplot)#)
+return(#suppressWarnings(
+    anomplot
+    )#)
 }
 
 

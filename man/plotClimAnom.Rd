@@ -39,7 +39,7 @@ plotClimAnom(
 If specifying new months not yet included in NETN_clim_annual dataset, will
 download months that are available from NOAA.}
 
-\item{parameter}{Specify the monthly averaged parameter to plot. Acceptable values are
+\item{parameter}{Specify the monthly averaged parameter to plot. Only 1 can be selected at a time. Acceptable values are:
 \describe{
 \item{"tmean"}{Plot mean temperature comparisons.}
 \item{"tmax"}{Plot max temperature comparisons.}
