@@ -9,10 +9,11 @@ plotClimTrend(
   years = 2006:format(Sys.Date(), "\%Y"),
   months = 1:12,
   layers = c("points", "lines"),
+  avg_window = 5,
   parameter = NA,
   units = "sci",
   facet_park = FALSE,
-  facet_param = TRUE,
+  facet_param = FALSE,
   palette = "viridis",
   span = 0.3,
   plot_se = FALSE,
@@ -42,10 +43,14 @@ plotClimTrend(
 If specifying new months not yet included in NETN_clim_annual dataset, will
 download months that are available from NOAA.}
 
-\item{layers}{Options are "points", "lines", "smooth", and "bar". By default, both points and lines will plot.
-The lines option connects each monthly value with a linear line. If you include lines and smooth, the
-loess-smoothed line will also plot.
+\item{layers}{Options are "points", "lines", "smooth", "rollavg", and "bar". By default, both points
+and lines will plot. The lines option connects each monthly value with a linear line. If you include
+lines and smooth, the loess-smoothed line will also plot. The rollavg will plot a rolling average (5-year default).
 The bar argument plots a bar chart.}
+
+\item{avg_window}{Number of years to include in the rolling average, if rollavg specified in layers. Default is 5,
+and must be >= 1. Currently only works at annual level, not monthly. Must also use a window that is smaller than
+the span of years specified. Preferably this is only used for long time-series.}
 
 \item{parameter}{Specify the parameter(s) to plot. Acceptable values are
 \describe{
@@ -63,15 +68,14 @@ and precipitation units are in inches.}
 \item{facet_park}{Logical. If TRUE, plots sites on separate facets (ie figures). If FALSE (Default),
 plots all sites on the same figure. This is only enabled if multiple sites are chosen.}
 
-\item{facet_param}{Logical. If TRUE (Default), plots parameters on separate facets. If FALSE, plots
-all parameters on the same figure. Note that results will be funky if selected parameters have different
-units (e.g., temp and precip).}
+\item{facet_param}{Logical. If TRUE, plots parameters on separate facets. If FALSE (Default), plots
+all parameters on the same figure. Note that function will automatically facet if parameters with
+different units (ie tmean and ppt) are selected.}
 
-\item{palette}{Theme to plot points and lines. Options currently are 'viridis' (Default- ranges of blue,
+\item{palette}{Theme to plot points and lines. Options include 'viridis' (Default- ranges of blue,
 green and yellow), magma (yellow, red, purple), plasma (brighter version of magma), turbo (rainbow),
-or discrete palettes from RColorBrewer. Common options are "Set1", "Set2", "Dark2", "Accent".
-Run RColorBrewer::display.brewer.all(type = 'qual') to see full set of options. Note that discrete
-palettes only have 9 colors, so can't be used if grouping variable (e.g. park) has > 9 levels.}
+or specify a vector of colors manually. If fewer colors than parameters are specified, they will be
+ramped to generate enough colors.}
 
 \item{span}{Numeric. Determines how smoothed the line will be for layers = 'smooth'. Default is 0.3. Higher spans (up to 1)
 cause more smoothing (straighter lines). Smaller spans are wavier. Span can range from 0 to 1. Span of 1 is linear.}
@@ -105,6 +109,13 @@ plotClimTrend(park = "MABI", years = 1895:2024, layers = 'lines', parameter = "t
 and only sample months using the Dark2 color palette.
 plotClimTrend(park = c("MABI", "SARA"), years = 2006:2024,
               parameter = "tmean", span = 0.7, months = 5:10, palette = "Dark2")
+
+# Plot 5-year rolling average temp with points for ACAD full time-series
+plotClimTrend(park = "ACAD", parameter = "tmean", layers = c("points", "rollavg"), years = 1900:2024)
+
+# Plot 10-year rolling average of all temp params for ACAD full time-series with manual colors
+plotClimTrend(park = "ACAD", parameter = c("tmean", "tmax", "tmin"), layers = "rollavg", avg_window = 10,
+palette = c("black", "red", "blue"))
 
 }
 

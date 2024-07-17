@@ -273,7 +273,7 @@ plotClimAnom <- function(park = "all",
   } else {c(-max(clim_comb4$anom), max(clim_comb4$anom))}
 
   ybreaks_pct1 = data.frame(pct = c(-100, 0, 100, 200, 300, 400, 500),
-                            label = c("No precip", "Avg. Precip", "2x Avg.", "3x Avg.", "4x Avg.", "5x Avg.", "6x Avg.")
+                            label = c("No precip", "Average", "2x Avg.", "3x Avg.", "4x Avg.", "5x Avg.", "6x Avg.")
                             )
   ybreaks_pct <- ybreaks_pct1[ybreaks_pct1$pct < max(clim_comb4$anom),]
 

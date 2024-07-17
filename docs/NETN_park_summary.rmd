@@ -45,9 +45,9 @@ cum_cap5 <- paste0("Cumulative annual precipitation by month for past 5 years ("
 
 drgt_cap5 <- paste0("Last 5 years (", yr5, ":", yr_current, ") of weekly drought condition based on proportion of a park's predominant county by drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a>.") 
 
-temp_capT <- paste0("Loess smoothed (span 0.3) minimum, maximum, and average temperature trends from 1900 to ", yr_current, " by month derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
+temp_capT <- paste0("5-year rolling average annual minimum, maximum, and average temperature trends from 1900 to ", yr_current, " by month derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
 
-ppt_capT <- paste0("Loess smoothed (span 0.3) total precipitation trends by month from 1900 to ", yr_current, " derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
+ppt_capT <- paste0("5-year rolling average annual total precipitation trends by month from 1900 to ", yr_current, " derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
 
 anom_capT <- paste0("Monthly deviations from historic baselines, with positive (red) bars, indicated above average deviations, and negative (blue) bars indicating below average deviations for 1900 to ", yr_current, ". Historic baselines are based on <a href='https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals'>NOAA 20th century normals</a> for a given park's geographic centroid. Monthly data are derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
 
@@ -115,7 +115,7 @@ plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'tmean',
 <details open><summary class='drop'>Total Precipitation</summary>
 ```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = anom_cap5}
 plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'ppt_pct', 
-             legend_position = "bottom", gridlines = "grid_x")
+             legend_position = "bottom", gridlines = "grid_x", palette = c("#1e90ff", "#7F6748"))
 #cat(anom_cap5, "\n\n")
 ```
 </details>
@@ -147,8 +147,9 @@ plotClimCumPrecip(park = parkcode, years = yr1:yr_current, legend_position = "bo
 ```{r fig.height=8, fig.width=13, results = "asis", fig.cap = temp_capT}
 plotClimTrend(park = parkcode, years = 1900:yr_current, 
               parameter = c("tmin", "tmax", "tmean"), facet_param = F,
-              palette = "Dark2", legend_position = "bottom", plot_se = T,
-              layers = "smooth", gridlines = "grid_x", units = "eng")
+              legend_position = "bottom", plot_se = T,
+              layers = "rollavg", gridlines = "grid_x", units = "eng", 
+              palette = c("dimgrey", "#EC6128", "#3B70B0"))
 #cat(temp_capT, "\n\n")
 
 ```
@@ -169,8 +170,8 @@ plotClimAnom(park = parkcode, years = 1900:yr_current,
 ```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = ppt_capT}
 plotClimTrend(park = parkcode, years = 1900:yr_current,
               parameter = c("ppt"), facet_param = F, plot_se = T,
-              palette = "Dark2", legend_position = "bottom", 
-              layers = "smooth", gridlines = "grid_x", units = "eng")
+              palette = "#3B70B0", legend_position = "bottom", 
+              layers = c("rollavg"), gridlines = "grid_x", units = "eng")
 
 #cat(ppt_capT, "\n\n")
 ```
@@ -180,7 +181,7 @@ plotClimTrend(park = parkcode, years = 1900:yr_current,
 <details open><summary class='drop'>Precipitation Anomalies</summary>
 ```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = anom_capT}
 plotClimAnom(park = parkcode, years = 1900:yr_current, gridlines = "grid_x", 
-              parameter = c("ppt_pct"), legend_position = "bottom")
+              parameter = c("ppt_pct"), legend_position = "bottom", palette = c("#1e90ff", "#7F6748"))
 
 #cat(anom_capT, "\n\n")
 ```

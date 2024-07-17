@@ -49,20 +49,23 @@
 #' @param facet_park Logical. If TRUE, plots sites on separate facets (ie figures). If FALSE (Default),
 #' plots all sites on the same figure. This is only enabled if multiple sites are chosen.
 #'
-#' @param facet_param Logical. If TRUE (Default), plots parameters on separate facets. If FALSE, plots
-#' all parameters on the same figure. Note that results will be funky if selected parameters have different
-#' units (e.g., temp and precip).
+#' @param facet_param Logical. If TRUE, plots parameters on separate facets. If FALSE (Default), plots
+#' all parameters on the same figure. Note that function will automatically facet if parameters with
+#' different units (ie tmean and ppt) are selected.
 #'
-#' @param layers Options are "points", "lines", "smooth", and "bar". By default, both points and lines will plot.
-#' The lines option connects each monthly value with a linear line. If you include lines and smooth, the
-#' loess-smoothed line will also plot.
+#' @param layers Options are "points", "lines", "smooth", "rollavg", and "bar". By default, both points
+#' and lines will plot. The lines option connects each monthly value with a linear line. If you include
+#' lines and smooth, the loess-smoothed line will also plot. The rollavg will plot a rolling average (5-year default).
 #' The bar argument plots a bar chart.
 #'
-#' @param palette Theme to plot points and lines. Options currently are 'viridis' (Default- ranges of blue,
+#' @param avg_window Number of years to include in the rolling average, if rollavg specified in layers. Default is 5,
+#' and must be >= 1. Currently only works at annual level, not monthly. Must also use a window that is smaller than
+#' the span of years specified. Preferably this is only used for long time-series.
+#'
+#' @param palette Theme to plot points and lines. Options include 'viridis' (Default- ranges of blue,
 #' green and yellow), magma (yellow, red, purple), plasma (brighter version of magma), turbo (rainbow),
-#' or discrete palettes from RColorBrewer. Common options are "Set1", "Set2", "Dark2", "Accent".
-#' Run RColorBrewer::display.brewer.all(type = 'qual') to see full set of options. Note that discrete
-#' palettes only have 9 colors, so can't be used if grouping variable (e.g. park) has > 9 levels.
+#' or specify a vector of colors manually. If fewer colors than parameters are specified, they will be
+#' ramped to generate enough colors.
 #'
 #' @param span Numeric. Determines how smoothed the line will be for layers = 'smooth'. Default is 0.3. Higher spans (up to 1)
 #' cause more smoothing (straighter lines). Smaller spans are wavier. Span can range from 0 to 1. Span of 1 is linear.
@@ -89,6 +92,13 @@
 #' plotClimTrend(park = c("MABI", "SARA"), years = 2006:2024,
 #'               parameter = "tmean", span = 0.7, months = 5:10, palette = "Dark2")
 #'
+#' # Plot 5-year rolling average temp with points for ACAD full time-series
+#' plotClimTrend(park = "ACAD", parameter = "tmean", layers = c("points", "rollavg"), years = 1900:2024)
+#'
+#' # Plot 10-year rolling average of all temp params for ACAD full time-series with manual colors
+#' plotClimTrend(park = "ACAD", parameter = c("tmean", "tmax", "tmin"), layers = "rollavg", avg_window = 10,
+#' palette = c("black", "red", "blue"))
+#'
 #'}
 #'
 #' @return Returns a ggplot object of specified climate trends
@@ -99,14 +109,20 @@ plotClimTrend <- function(park = "all",
                           years = 2006:format(Sys.Date(), "%Y"),
                           months = 1:12,
                           layers = c("points", "lines"),
+                          avg_window = 5,
                           parameter = NA, units = "sci",
                           facet_park = FALSE,
-                          facet_param = TRUE,
+                          facet_param = FALSE,
                           palette = "viridis",
                           span = 0.3, plot_se = FALSE,
                           legend_position = 'none', gridlines = 'none'){
 
   #-- Error handling --
+  if(any(layers %in% "rollavg")){
+    if(!requireNamespace("zoo", quietly = TRUE)){
+      stop("Package 'zoo' needed if layers = 'rollavg'. Please install it.", call. = FALSE)
+  }}
+
   park <- match.arg(park, several.ok = TRUE,
                     c("all", "LNETN", "ACAD", "BOHA", "MABI", "MIMA", "MORR",
                       "ROVA", "SAGA", "SAIR", "SARA", "WEFA"))
@@ -122,11 +138,13 @@ plotClimTrend <- function(park = "all",
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
   stopifnot(class(span) %in% "numeric")
   stopifnot(class(plot_se) %in% "logical")
-  layers <- match.arg(layers, c("points", "lines", "smooth", "bar"), several.ok = TRUE)
+  layers <- match.arg(layers, c("points", "lines", "smooth", "bar", "rollavg"), several.ok = TRUE)
   legend_position <- match.arg(legend_position, c("none", "bottom", "top", "right", "left"))
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
   units <- match.arg(units, c("sci", "eng"))
-
+  stopifnot(class(avg_window) %in% c("numeric", "integer"), avg_window >= 1)
+  if(any(layers %in% "rollavg") & length(years)*2 < avg_window){
+    stop("To use a rolling average, the avg_window must be at least 2x the number of years specified.")}
   #-- Compile data for plotting --
   # Clim data as annual monthly averages
   data("NETN_clim_annual")
@@ -182,12 +200,16 @@ plotClimTrend <- function(park = "all",
   param <- if(any(parameter == "all")){c("ppt", "tmean", "tmax", "tmin")} else {parameter}
 
   #-- Set up plotting features --
-  ylab <- ifelse(length(unique(clim_dat$param)) == 1, unique(clim_dat$param), "Monthly Value")
+  ylab <- ifelse(length(unique(clim_dat$param)) == 1, unique(clim_dat$param),
+                 paste0("Monthly Value"))
 
   facetpark <- ifelse(facet_park == TRUE & length(unique(clim_dat$UnitCode)) > 1, TRUE, FALSE)
-  facetparam <- ifelse(facet_param == TRUE & length(unique(clim_dat$param)) > 1, TRUE, FALSE)
+  facetparam <- ifelse((facet_param == TRUE & length(unique(clim_dat$param)) > 1) |
+                         any(parameter %in% c("ppt", "ppt_pct")) &
+                         any(parameter %in% c("tmean", "tmax", "tmin")), TRUE, FALSE)
 
-  pars <- c("ppt", "tmax", "tmin", "tmean", "ppt_pct")
+  pars <- c("ppt", "tmax", "tmin", "tmean", "ppt_pct",
+            "ppt_ra", "tmax_ra", "tmin_ra", "tmean_ra", "ppt_pct_ra")
 
   units_temp <- if(units == "sci"){"C"} else {"F"}
   units_ppt <- if(units == "sci"){"mm"} else {"in"}
@@ -196,14 +218,23 @@ plotClimTrend <- function(park = "all",
              paste0("Avg. Max. Temp. (", units_temp, ")"),
              paste0("Avg. Min. Temp. (", units_temp, ")"),
              paste0("Average Temp. (", units_temp, ")"),
-             paste0("% of Total Precip."))
+             paste0("% of Total Precip."),
+             paste0(avg_window, "-yr Avg. Total Precip. (", units_ppt, ")"),
+             paste0(avg_window, "-yr Avg. Max. Temp. (", units_temp, ")"),
+             paste0(avg_window, "-yr Avg. Min. Temp. (", units_temp, ")"),
+             paste0(avg_window, "-yr Average Temp. (", units_temp, ")"),
+             paste0(avg_window, "-yr % of Total Precip."))
 
   param_labels <- data.frame(param = pars, param_label = plabs)
 
   clim_dat1 <- left_join(clim_dat, param_labels, by = 'param')
 
-  ylab <- ifelse(length(parameter) > 1, "Monthly Value",
-                 param_labels$param_label[param_labels$param == parameter])
+  ylab <- if(length(parameter) > 1 &
+             any(parameter %in% c("ppt", "ppt_pct")) &
+             any(parameter %in% c("tmean", "tmax", "tmin"))){"Monthly Value"
+  } else if(length(parameter) > 1 & all(parameter %in% c("tmean", "tmax", "tmin"))){
+    paste0("Monthly Temperature (", units_temp, ")")
+    } else {param_labels$param_label[param_labels$param == parameter]}
 
   clim_dat1$date2 <- as.Date(clim_dat1$date, format = c("%Y-%m-%d"))
 
@@ -233,14 +264,34 @@ plotClimTrend <- function(park = "all",
       clim_dat2 |> mutate(value = ifelse(param == "ppt", value/25.4, (value * 9/5) + 32))
     }
 
-  vir_pal = ifelse(palette %in% c("viridis", "magma", "plasma", "turbo"), "viridis", "colbrew")
-  vir_option = switch(palette,
-                      viridis = 'viridis',
-                      magma = 'magma',
-                      plasma = 'plasma',
-                      turbo = 'turbo')
+  vir_pal = ifelse(palette %in%
+                   c("viridis", "magma", "plasma", "turbo", "mako", "rocket", "cividis", "inferno"),
+                   "viridis", "colbrew")
 
-  #-- Create plot --
+  pal <-
+    if(any(vir_pal == "colbrew")){
+      if(length(palette) > 1){
+        rep(colorRampPalette(palette)(length(unique(param))), times = length(parameter))
+      } else { # hack to allow gradient to work with 1 color
+        rep(colorRampPalette(c(palette, palette))(length(unique(param))), times = length(parameter))
+      }
+    }
+
+
+  if(any(layers %in% "rollavg")){
+    roll_avg_dat1 <- clim_dat_final |> arrange(UnitCode, year, month, param) |>
+      group_by(UnitCode, UnitName, year, param) |>
+      summarize(ann_avg = if(any(param == "ppt")){sum(value)} else {mean(value)}, .groups = 'drop') |>
+      ungroup() |>
+      group_by(UnitCode, UnitName, param) |>
+      mutate(roll_avg = zoo::rollmean(ann_avg, k = avg_window, fill = NA, align = "right"),
+             date2 = as.Date(paste0(year, "-", 07, "-", 02), format = "%Y-%m-%d"),
+             param = paste0(param, "_ra")) |> ungroup()
+
+    roll_avg_dat <- left_join(roll_avg_dat1, param_labels, by = 'param')
+  }
+
+#-- Create plot --
   climtrendplot <-
     ggplot(clim_dat_final, aes(x = date2, y = value,
                                group = if(facetpark == TRUE & facetparam == FALSE){param_label
@@ -260,6 +311,9 @@ plotClimTrend <- function(park = "all",
         geom_smooth(method = 'loess', formula = 'y ~ x', se = plot_se, span = span, alpha = 0.2) } +
       {if(any(layers %in% "lines")) geom_line()} +
       {if(any(layers %in% "points")) geom_point(alpha = 0.6)} +
+      {if(any(layers %in% "rollavg"))
+        geom_line(data = roll_avg_dat, aes(x = date2, y = roll_avg,
+                                           group = param_label, color = param_label), linewidth = 1.5)} +
       {if(any(layers %in% "bar")) geom_bar(stat = 'identity')} +
       # themes
       theme_NETN() +
@@ -277,10 +331,10 @@ plotClimTrend <- function(park = "all",
       {if(facetparam == TRUE & facetpark == FALSE){facet_wrap(~param_label, scales = facet_y)}}+
       {if(facetparam == TRUE & facetpark == TRUE){facet_wrap(~UnitName + param_label)}}+
       # palettes
-      {if(vir_pal == "vir_pal") scale_color_viridis_d(vir_option)} +
-      {if(vir_pal == "vir_pal") scale_fill_viridis_d(vir_option)} +
-      {if(vir_pal == "colbrew") scale_color_brewer(palette = palette)} +
-      {if(vir_pal == "colbrew") scale_fill_brewer(palette = palette)} +
+      {if(any(vir_pal == "viridis")) scale_color_viridis_d(option = palette)} +
+      {if(any(vir_pal == "viridis")) scale_fill_viridis_d(option = palette)} +
+      {if(any(vir_pal == "colbrew")) scale_fill_manual(values = pal)} +
+      {if(any(vir_pal == "colbrew")) scale_color_manual(values = pal)} +
       # axis format
       scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format)) +
       scale_y_continuous(n.breaks = 8) +
