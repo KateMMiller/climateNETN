@@ -258,9 +258,9 @@ plotClimAnom <- function(park = "all",
     } else {
             switch(parameter,
                    "ppt" = paste0("Precipitation Anomaly (", units_ppt, ")"),
-                   "tmin" = paste0("Temperature Anomaly (", units_temp, ")"),
-                   "tmax" = paste0("Temperature Anomaly (", units_temp, ")"),
-                   "tmean" = paste0("Temperature Anomaly (", units_temp, ")"),
+                   "tmin" = paste0("Temperature Anomaly (", units_temp, ")\n"),
+                   "tmax" = paste0("Temperature Anomaly (", units_temp, ")\n"),
+                   "tmean" = paste0("Temperature Anomaly (", units_temp, ")\n"),
                    "ppt_pct" = paste0("+/- % of Precipitation Anomaly"))
     }
 
@@ -311,7 +311,7 @@ anomplot <-
       theme(
         panel.grid.major.x = element_line(color = 'grey'))}} +
     # Axes
-    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format)) +
+    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format), expand = c(0.01, 0.01)) +
    {if(!parameter %in% "ppt_pct")
      scale_y_continuous(n.breaks = 8, limits = yrange,
                         sec.axis = dup_axis(name = NULL, breaks = 0, labels = "Average  ")) }  +

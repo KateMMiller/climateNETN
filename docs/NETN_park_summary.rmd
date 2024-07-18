@@ -15,7 +15,7 @@ params:
 ---
 
 ```{r include = FALSE}
-knitr::opts_chunk$set(echo = FALSE, fig.pos = "h", warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.pos = "h", warning = FALSE, message = FALSE, fig.align = 'left')
 ```
 
 ```{r include = F, results = 'hide'}
@@ -29,6 +29,7 @@ library(kableExtra)
 ```{r }
 # park = "MABI"; yr_start = 2006; yr_current = 2023;
 parkcode <- child_env$park
+parkname <- child_env$park_df$UnitName[child_env$park_df$UnitCode == parkcode]
 ```
 
 ##  `r park` {.tabset}
@@ -103,7 +104,7 @@ cat("\n\n")
 ### 5-year Trends {.tabset}
 <h1>5-year vs. 20th Century Baseline</h1>
 <details open><summary class='drop'>Temperature</summary>
-```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = anom_cap5}
+```{r fig.height=6, fig.width=13, results = 'asis', fig.cap = anom_cap5}
 yr1 = yr_current - 4
 plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'tmean', 
              legend_position = "bottom", gridlines = "grid_x", units = "eng")
@@ -113,7 +114,7 @@ plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'tmean',
 <br>
 
 <details open><summary class='drop'>Total Precipitation</summary>
-```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = anom_cap5}
+```{r fig.height=6, fig.width=13, results = 'asis', fig.cap = anom_cap5}
 plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'ppt_pct', 
              legend_position = "bottom", gridlines = "grid_x", palette = c("#1e90ff", "#7F6748"))
 #cat(anom_cap5, "\n\n")
@@ -122,7 +123,7 @@ plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'ppt_pct',
 <br>
 
 <details open><summary class='drop'>Drought Condition</summary>
-```{r fig.height=8, fig.width=12.8, results = 'asis', fig.cap = drgt_cap5}
+```{r fig.height=6, fig.width=12.35, results = 'asis', fig.cap = drgt_cap5}
 plotClimDrought(park = parkcode, years = yr1:yr_current, gridlines = "grid_x", 
                 legend_position = "bottom")
 #cat(drgt_cap5, "\n\n")
@@ -132,7 +133,7 @@ plotClimDrought(park = parkcode, years = yr1:yr_current, gridlines = "grid_x",
 
 
 <details open><summary class='drop'>Cumulative Precipitation</summary>
-```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = cum_cap5}
+```{r fig.height=7, fig.width=13, results = 'asis', fig.cap = cum_cap5}
 plotClimCumPrecip(park = parkcode, years = yr1:yr_current, legend_position = "bottom", units = "eng", palette = "#1e90ff", layers = c("points", "lines"))
 
 #cat(cum_cap5, "\n\n")
@@ -144,8 +145,8 @@ plotClimCumPrecip(park = parkcode, years = yr1:yr_current, legend_position = "bo
 ### Long-term Trends {.tabset}
 <h1>Historic Trends 1900:2023</h1>
 <details open><summary class='drop'>Temperature Trends</summary>
-```{r fig.height=8, fig.width=12.8, results = "asis", fig.cap = temp_capT}
-plotClimTrend(park = parkcode, years = 1900:yr_current, 
+```{r fig.height=6.5, fig.width=12.05, results = "asis", fig.cap = temp_capT}
+plotClimTrend(park = parkcode, years = 1895:yr_current, 
               parameter = c("tmin", "tmax", "tmean"), facet_param = F,
               legend_position = "bottom", plot_se = T,
               layers = "rollavg", gridlines = "grid_x", units = "eng", 
@@ -157,7 +158,7 @@ plotClimTrend(park = parkcode, years = 1900:yr_current,
 <br>
 
 <details open><summary class='drop'>Temperature Anomalies</summary>
-```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = anom_capT}
+```{r fig.height=6.5, fig.width=13, results = 'asis', fig.cap = anom_capT}
 plotClimAnom(park = parkcode, years = 1900:yr_current, 
               parameter = c("tmean"), legend_position = "bottom", gridlines = "grid_x", units = "eng")
 
@@ -167,8 +168,8 @@ plotClimAnom(park = parkcode, years = 1900:yr_current,
 <br>
 
 <details open><summary class='drop'>Precipitation Trends</summary>
-```{r fig.height=8, fig.width=12.8, results = 'asis', fig.cap = ppt_capT}
-plotClimTrend(park = parkcode, years = 1900:yr_current,
+```{r fig.height=6.5, fig.width=12.05, results = 'asis', fig.cap = ppt_capT}
+plotClimTrend(park = parkcode, years = 1895:yr_current,
               parameter = c("ppt"), facet_param = F, plot_se = T,
               palette = "#3B70B0", legend_position = "bottom", 
               layers = c("rollavg"), gridlines = "grid_x", units = "eng")
@@ -179,7 +180,7 @@ plotClimTrend(park = parkcode, years = 1900:yr_current,
 <br>
 
 <details open><summary class='drop'>Precipitation Anomalies</summary>
-```{r fig.height=8, fig.width=13, results = 'asis', fig.cap = anom_capT}
+```{r fig.height=6.5, fig.width=13, results = 'asis', fig.cap = anom_capT}
 plotClimAnom(park = parkcode, years = 1900:yr_current, gridlines = "grid_x", 
               parameter = c("ppt_pct"), legend_position = "bottom", palette = c("#1e90ff", "#7F6748"))
 
@@ -190,7 +191,7 @@ plotClimAnom(park = parkcode, years = 1900:yr_current, gridlines = "grid_x",
 
 
 <details open><summary class='drop'>Drought Conditions</summary>
-```{r fig.height=8, fig.width=12.8, results = 'asis', fig.cap = drgt_capT}
+```{r fig.height=6.5, fig.width=12.0, results = 'asis', fig.cap = drgt_capT}
 plotClimDrought(park = parkcode, years = 2000:yr_current, gridlines = "grid_x", 
                 legend_position = "bottom")
 
@@ -198,3 +199,13 @@ plotClimDrought(park = parkcode, years = 2000:yr_current, gridlines = "grid_x",
 ```
 </details>
 <br>
+
+### Table of Records {.tabset}
+```{r results = "asis"}
+cat(paste0("Table of top 5 monthly records for ", parkname, ". Cells include the year for each record by month, with years >= 2020 denoted in red. Hovering over the cell will display the value for each record.\n\n"))
+cat("\n\n")
+cat("\n\n")
+sumStatsTable(park = parkcode, years = 1895:yr_current, units = "eng", top_n = 5, kable = T)
+cat("\n\n")
+```
+

@@ -20,6 +20,8 @@ knitr::opts_chunk$set(echo = FALSE, fig.pos = "h", warning = FALSE, message = FA
 library(tidyverse)
 library(climateNETN)
 library(leaflet)
+#library(leafem) # for addHomeButton
+library(sf)
 library(grid)
 library(gridExtra)
 
@@ -29,10 +31,11 @@ yr_current <- params$year_current
 child_env <- new.env()
 
 child_env$yr_current <- yr_current
-child_env$netn_list <- c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
+child_env$netn_list <- c("ACAD")#, "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
+child_env$park_df <- NETN_centroids[,c("UnitCode", "UnitName")]
 ```
 
-```{r results = 'asis', include = F, cache = F}
+```{r results = 'asis', include = F, cache = F, eval = T}
 netn <- lapply(seq_along(child_env$netn_list), function(x){
   child_env$park = child_env$netn_list[[x]]
   knitr::knit_child("NETN_park_summary.rmd", envir = child_env)
@@ -40,11 +43,15 @@ netn <- lapply(seq_along(child_env$netn_list), function(x){
   
 })
 ```
-```{r results = 'asis'}
+```{r results = 'asis', eval = T}
 cat(unlist(netn), sep = "\n\n")
 ```
 
 ## Map of Parks
+Click or hover over blue icons to view park name.
+<br>
+<br>
+
 ```{r out.width="80%", message=F}
 NPSbasic <- "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
 
@@ -55,7 +62,9 @@ ESRItopo <- "http://services.arcgisonline.com/arcgis/rest/services/World_Topo_Ma
 ESRINatGeo <- "http://services.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}"
 
 bbox <- read.csv("boundboxes.csv") #lat/long coordinates and zoom level for each park 
-
+NETN_bbox <- data.frame(lat = c(47.38, 44.80, 38.71, 43.40, 39.994187),
+                        long = c(-68.71, -66.67, -74.84, -75.54, -80.521832)) |>
+             st_as_sf(coords = c("long", "lat"), crs = 4326) |> st_bbox()
 # Find center coordinates of park box
 data("NETN_centroids")
 long_cent <- mean(c(bbox$LongE, bbox$LongW))
@@ -86,15 +95,24 @@ leaflet(height = 700) %>%
     addTiles(group="Topo", urlTemplate = ESRItopo) %>% 
     addTiles(group="NatGeo", urlTemplate = ESRINatGeo) %>% 
   # add button to control map tiles
-    addLayersControl(map = ., baseGroups = c("Map","Imagery","Topo", "NatGeo"),
-                     options = layersControlOptions(collapsed=T)) %>%
+    addLayersControl(map = ., 
+                     baseGroups = c("Map", "Imagery", "Topo", "NatGeo"),
+                     options = layersControlOptions(collapsed = T)) %>%
     # add site markers 
     addMarkers(data = parks, ~long, ~lat, 
                # label on mouseover
-               label=as.character(parks$UnitCode),
+               label = paste0(parks$UnitName, " (", parks$UnitCode, ")", "\n\n"),
                       # popup on click
-               popup = paste0("<b>", parks$UnitName, "</b><br>")
-                      ) 
+               popup = paste0(parks$UnitName, " (", parks$UnitCode, ")", "\n\n"),
+               group = "park"
+                      ) %>% 
+    addEasyButton(easyButton(
+      icon = "fa-home",
+      title = "Reset View",
+      onClick = JS("function(btn, map){
+                   var groupLayer = map.layerManager.getLayerGroup('park');
+                   map.fitBounds(groupLayer.getBounds());}")
+    ))
 
 ```
 

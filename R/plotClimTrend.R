@@ -162,7 +162,8 @@ plotClimTrend <- function(park = "all",
   # Update clim data if requesting a year x month combination that is not currently in
   # the saved NETN_clim_2006_2024.rda but only for complete months
   date_range_data <- sort(unique(clim_dat_long$date))
-  date_range_fxn <- paste0(rep(years, each = length(months)),"-", rep(sprintf("%02d", months), length(years)), "-", 15)
+  date_range_fxn <- paste0(rep(years, each = length(months)),"-",
+                           rep(sprintf("%02d", months), length(years)), "-", 15)
   new_dates1 <- date_range_fxn[!date_range_fxn %in% date_range_data]
 
   # latest date of complete month
@@ -191,9 +192,6 @@ plotClimTrend <- function(park = "all",
       comb_clim <- rbind(clim_dat_long, new_clim_long)
       } else {clim_dat_long}
     }
-
-  # clim_dat$param[clim_dat$param == "prcp"] <- "ppt"
-  # clim_dat$param[clim_dat$param == "tavg"] <- "tmean"
 
   if(nrow(clim_dat) == 0){stop("Specified arguments returned a data frame with 0 records.")}
 
@@ -233,7 +231,7 @@ plotClimTrend <- function(park = "all",
              any(parameter %in% c("ppt", "ppt_pct")) &
              any(parameter %in% c("tmean", "tmax", "tmin"))){"Monthly Value"
   } else if(length(parameter) > 1 & all(parameter %in% c("tmean", "tmax", "tmin"))){
-    paste0("Monthly Temperature (", units_temp, ")")
+    paste0("Monthly Temperature (", units_temp, ")\n")
     } else {param_labels$param_label[param_labels$param == parameter]}
 
   clim_dat1$date2 <- as.Date(clim_dat1$date, format = c("%Y-%m-%d"))
@@ -255,7 +253,10 @@ plotClimTrend <- function(park = "all",
   date_format <- ifelse(break_len %in% c("1 year", "2 years", "5 years"), "%Y",
                         ifelse(break_len %in% c("2 months", "4 months"), "%b/%Y",
                                "%b"))
-  datebreaks <- seq(min(clim_dat2$date2, na.rm = T), max(clim_dat2$date2, na.rm = T) + 30, by = break_len)
+  datebreaks1 <- seq(min(clim_dat2$date2, na.rm = T), max(clim_dat2$date2, na.rm = T) + 30, by = break_len)
+  # Drop first 5-year axis tick for rolling avg.
+  datebreaks <- if(any(layers %in% "rollavg")){datebreaks1[2:length(datebreaks1)]} else {datebreaks1}
+  datelims <- c(min(datebreaks), max(clim_dat2$date2))
 
   seq_int <- if(any(parameter == "ppt")){20} else {2}
 
@@ -336,7 +337,8 @@ plotClimTrend <- function(park = "all",
       {if(any(vir_pal == "colbrew")) scale_fill_manual(values = pal)} +
       {if(any(vir_pal == "colbrew")) scale_color_manual(values = pal)} +
       # axis format
-      scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format)) +
+      scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format),
+                   expand = c(0.01, 0), limits = datelims) +
       scale_y_continuous(n.breaks = 8) +
       # labels/themes
       labs(x = NULL, y = ylab)

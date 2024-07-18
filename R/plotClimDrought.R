@@ -150,7 +150,7 @@ plotClimDrought <- function(park = "all",
     # layers
     geom_area() +
     # axis format
-    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format)) +
+    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format), expand = c(0.02,0)) +
     # layer formatting
     scale_fill_manual(values = c("#FFF000", "#FCD37F", "#FFAA00", "#E60000", "#730000"), name = "Drought Level") +
     scale_color_manual(values = c("#F0E100", "#E7C274", "#E19600", "#D10000", "#680000"), name = "Drought Level") +
