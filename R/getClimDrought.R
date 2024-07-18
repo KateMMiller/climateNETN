@@ -38,6 +38,8 @@
 #' data are available every Tuesday. If the week_start specified is not a Tuesday, code will shift the date to the
 #' Tuesday of the specified start week.
 #'
+#' @param end_date Quoted end date of query. If blank (Default), will return the most recent week of data available.
+#'
 #' @param dom_county Logical. If TRUE (Default) only plots predominant county if park covers multiple counties.
 #' If FALSE, facets on county.
 #'
@@ -63,7 +65,7 @@
 #' @export
 
 getClimDrought <- function(park = "all",
-                           years = c(2006:2023), week_start = NA,
+                           years = c(2006:2023), week_start = NA, end_date = NA,
                            dom_county = TRUE){
 
   #--- error handling ---
@@ -76,8 +78,13 @@ getClimDrought <- function(park = "all",
   stopifnot(class(dom_county) == "logical")
   if(!is.na(week_start)){
     date_check <- as.Date(week_start, format = "%m/%d/%Y")
-    if(is.na(date_check)){stop("Wrong date format specified. Must be formatted as 'mm/dd/yyyy'.")}
+    if(is.na(date_check)){stop("Wrong week_start format specified. Must be formatted as 'mm/dd/yyyy'.")}
   }
+  if(!is.na(end_date)){
+    date2_check <- as.Date(end_date, format = "%m/%d/%Y")
+    if(is.na(date2_check)){stop("Wrong end_date format specified. Must be formatted as 'mm/dd/yyyy'.")}
+  }
+
   # Check that suggested package required for this function are installed
   if(!requireNamespace("httr", quietly = TRUE)){
     stop("Package 'httr' needed to download weather station data. Please install it.", call. = FALSE)
@@ -110,11 +117,15 @@ getClimDrought <- function(park = "all",
     } else {format(as.Date(start_day, format = "%m/%d/%Y"), "%m/%d/%Y")}
 
   end_day <-
+    if(is.na(end_date)){
     if(max(years) == current_year & is.na(week_start)){
       format(Sys.Date(), "%m/%d/%Y")
     } else if(max(years) < current_year & is.na(week_start)){
       format(as.Date(paste0("12/31/", max(years)), format = "%m/%d/%Y"), "%m/%d/%Y")
-      } else if(!is.na(week_start)){format(as.Date(start_tues, format = "%m/%d/%Y") + 6, "%m/%d/%Y")}
+    } else if(!is.na(week_start)){format(as.Date(start_tues, format = "%m/%d/%Y") + 6, "%m/%d/%Y")}
+    } else {
+      format(as.Date(end_date, format = "%m/%d/%Y"))
+    }
 
   # Set up aoi and filters for iterations
   fips <- "ParkFIPS"
