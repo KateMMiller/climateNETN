@@ -11,6 +11,7 @@ output:
 title: "NETN climate summary"
 params:
   year_current: 2024 # current year of data
+  end_date: "06/30/2024" # last day to plot 
 ---
 # {.tabset .tabset-pills}
 
@@ -33,6 +34,7 @@ child_env <- new.env()
 child_env$yr_current <- yr_current
 child_env$netn_list <- c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
 child_env$park_df <- NETN_centroids[,c("UnitCode", "UnitName")]
+child_env$end_date <- params$end_date
 ```
 
 ```{r results = 'asis', include = F, cache = F, eval = T}
