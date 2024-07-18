@@ -31,7 +31,7 @@ yr_current <- params$year_current
 child_env <- new.env()
 
 child_env$yr_current <- yr_current
-child_env$netn_list <- c("ACAD")#, "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
+child_env$netn_list <- c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
 child_env$park_df <- NETN_centroids[,c("UnitCode", "UnitName")]
 ```
 

@@ -159,7 +159,9 @@ plotClimDrought <- function(park = "all",
     theme(legend.position = legend_position,
           panel.border = element_rect(color = "#696969", fill = NA),
           panel.background = element_rect(fill = NA, color = NA),
-          axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) + #,
+          axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
+          legend.text = element_text(size = 9),
+          legend.title = element_text(size = 9)) + #,
     {if(legend_position == "bottom"){guides(fill = guide_legend(nrow = 1, byrow = T),
                                             color = guide_legend(nrow = 1, byrow = T))}} +
     {if(any(gridlines %in% c("grid_y", "both"))){
