@@ -7,6 +7,7 @@
 sumStatsTable(
   park = "ACAD",
   years = 1895:format(Sys.Date(), "\%Y"),
+  normal = "norm20cent",
   units = "sci",
   top_n = 5,
   kable = T
@@ -27,6 +28,13 @@ sumStatsTable(
 \item{"WEFA"}{Weir Farm NHP only}}}
 
 \item{years}{Numeric. Years to consider for summary table. Accepted values start at 1895.}
+
+\item{normal}{Specify normal to plot. By default, the 20th century normal (1901-2000) plots.
+Other options include:
+\describe{
+\item{"norm20cent"}{Plots the 20th century normal (1901 - 2000)}
+\item{"norm1990"}{Plots the 30-year norm from 1991 - 2020}
+}}
 
 \item{units}{Specify if you want Scientific or English units. Acceptable values are "sci" (default) and "eng".
 If "sci", temperature units are in C and precipitation units are in mm. If "eng", temperature units are in F,

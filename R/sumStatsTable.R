@@ -25,6 +25,13 @@
 #'
 #' @param years Numeric. Years to consider for summary table. Accepted values start at 1895.
 #'
+#' @param normal Specify normal to plot. By default, the 20th century normal (1901-2000) plots.
+#' Other options include:
+#' \describe{
+#' \item{"norm20cent"}{Plots the 20th century normal (1901 - 2000)}
+#' \item{"norm1990"}{Plots the 30-year norm from 1991 - 2020}
+#' }
+#'
 #' @param units Specify if you want Scientific or English units. Acceptable values are "sci" (default) and "eng".
 #' If "sci", temperature units are in C and precipitation units are in mm. If "eng", temperature units are in F,
 #' and precipitation units are in inches.
@@ -51,6 +58,7 @@
 #'
 sumStatsTable <- function(park = "ACAD",
                           years = 1895:format(Sys.Date(), "%Y"),
+                          normal = "norm20cent",
                           units = "sci",
                           top_n = 5,
                           kable = T){
@@ -61,6 +69,7 @@ sumStatsTable <- function(park = "ACAD",
 
   #if(any(park == "LNETN")){park = c("MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")} else {park}
   stopifnot(class(years) %in% c("numeric", "integer"), years >= 1895 & years <= format(Sys.Date(), "%Y"))
+  normal <- match.arg(normal, c("norm20cent", "norm1990"))
   stopifnot(class(top_n) %in% c("numeric", "integer"), top_n >= 1)
   stopifnot(class(kable) == "logical")
   if(kable == TRUE){
@@ -82,6 +91,32 @@ sumStatsTable <- function(park = "ACAD",
     dplyr::select(UnitCode, UnitName, year, month, ppt, tmax, tmin, tmean)
 
   clim_dat$date <- as.Date(paste0(clim_dat$year, "-", clim_dat$month, "-", 15), format = "%Y-%m-%d")
+
+  avg_dat <- NETN_clim_norms |> dplyr::filter(UnitCode %in% park)
+  avg_dat$mon <- factor(avg_dat$month, levels = sort(unique(avg_dat$month)),
+                        labels = unique(month.abb[avg_dat$month]))
+
+  norm_cols <- if(normal == "norm20cent"){c("mon", "ppt_norm_1901_2000", "tmean_norm_1901_2000")
+  } else {c("mon", "ppt_norm_1991_2020", "tmean_norm_1991_2020")}
+
+  avg_dat2 <- avg_dat[,norm_cols]
+  colnames(avg_dat2) <- c("mon", "ppt", "tmean")
+
+  if(units == "eng"){
+    avg_dat2$ppt <- avg_dat2$ppt/25.4
+    avg_dat2$tmean <- (avg_dat2$tmean * 9/5) + 32
+  }
+
+  avg_dat_wide <- rbind(
+                    avg_dat2 |> select(-tmean) |>
+                      pivot_wider(names_from = mon, values_from = ppt) |>
+                      mutate(param = "ppt"),
+                    avg_dat2 |> select(-ppt) |>
+                      pivot_wider(names_from = mon, values_from = tmean) |>
+                      mutate(param = "tmean")
+                    )
+
+
 
   # Update clim data if requesting a year x month combination that is not currently in
   # the saved NETN_clim_annual.rda but only for complete months
@@ -166,18 +201,27 @@ sumStatsTable <- function(park = "ACAD",
   clim_comb <- left_join(clim_yr, clim_wide_val, by = c("UnitCode", "UnitName", "param", "stat", "rank"),
                          suffix = c("_yr", "_val"))
 
+  # Functions for kable conditional formatting and tooltips
+  col_fxn <- function(col){
+    ifelse(clim_comb2[,col] >= 2020, "red", "black")
+  }
+
+  tool_fxn <- function(col){
+    units <- ifelse(clim_comb2$param == "ppt", ppt_units, temp_units)
+    avg_mon <- substr(col, 1, 3)
+    avg_df1 <- do.call("rbind", replicate(top_n * 2, avg_dat_wide, simplify = F)) |>
+      arrange(param) |> data.frame()
+    avg_df <- avg_df1[,avg_mon]
+
+    paste0("Record: ", format(round(clim_comb2[,col], 1), nsmall = 1), " (", units, "); ",
+           "\n",
+           "Average: ", format(round(avg_df, 1), nsmall = 1), " (", units, ")",
+           "\n")
+  }
+
   clim_final <-
   if(kable == T){
     clim_comb2 <- clim_comb |> arrange(UnitName, order, rank)
-
-    col_fxn <- function(col){
-      ifelse(clim_comb2[,col] >= 2020, "red", "black")
-    }
-
-    tool_fxn <- function(col){
-      units <- ifelse(clim_comb2$param == "ppt", ppt_units, temp_units)
-      paste0("Value: ", format(round(clim_comb2[,col], 1), nsmall = 1), " (", units, ")")
-    }
 
     clim_kab <-
     knitr::kable(clim_comb2 |> select(label, rank, Jan_yr:Dec_yr),
