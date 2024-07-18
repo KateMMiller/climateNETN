@@ -22,10 +22,13 @@ Imports:
 Suggests: 
     httr,
     jsonlite,
+    kableExtra,
+    knitr,
     ncdf4,
     raster,
     sf,
-    XML
+    XML,
+    zoo
 Collate: 
     'getClimDaymet.R'
     'getClimDrought.R'
@@ -38,3 +41,4 @@ Collate:
     'plotClimDrought.R'
     'plotClimRel.R'
     'plotClimTrend.R'
+    'sumStatsTable.R'
