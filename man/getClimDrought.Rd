@@ -8,6 +8,7 @@ getClimDrought(
   park = "all",
   years = c(2006:2023),
   week_start = NA,
+  end_date = NA,
   dom_county = TRUE
 )
 }
@@ -33,6 +34,8 @@ getClimDrought(
 given week. If blank, will return drought index for all weeks available in specified years. Note that weekly
 data are available every Tuesday. If the week_start specified is not a Tuesday, code will shift the date to the
 Tuesday of the specified start week.}
+
+\item{end_date}{Quoted end date of query. If blank (Default), will return the most recent week of data available.}
 
 \item{dom_county}{Logical. If TRUE (Default) only plots predominant county if park covers multiple counties.
 If FALSE, facets on county.}

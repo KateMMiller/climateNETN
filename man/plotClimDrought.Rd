@@ -9,9 +9,11 @@ plotClimDrought(
   years = format(Sys.Date(), format = "\%Y"),
   months = 1:12,
   dom_county = TRUE,
+  end_date = NA,
   legend_position = "right",
   plot_title = TRUE,
   gridlines = "none",
+  x_pad = c(0, 0),
   legend_row = 1
 )
 }
@@ -39,6 +41,8 @@ and end with the last Tuesday of the year specified. Defaults to current year.}
 \item{dom_county}{Logical. If TRUE (Default) only plots predominant county if park covers multiple counties.
 If FALSE, facets on county.}
 
+\item{end_date}{Quoted end date of query. If blank (Default), will return the most recent week of data available.}
+
 \item{legend_position}{Specify location of legend. To turn legend off, use legend_position = "none". Other
 options are "top", "bottom", "left", "right" (default).}
 
@@ -46,6 +50,9 @@ options are "top", "bottom", "left", "right" (default).}
 does not print site name. Only enabled when one site is selected.}
 
 \item{gridlines}{Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")}
+
+\item{x_pad}{Vector of 2 values. Specifies how much padding to add to x-axis on either side of axis.
+Default is c(0, 0)}
 
 \item{legend_row}{Integer. Specify number of rows to plot the legend. Default is 1.}
 }

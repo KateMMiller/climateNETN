@@ -38,10 +38,15 @@
 #' @param dom_county Logical. If TRUE (Default) only plots predominant county if park covers multiple counties.
 #' If FALSE, facets on county.
 #'
+#' @param end_date Quoted end date of query. If blank (Default), will return the most recent week of data available.
+#'
 #' @param legend_position Specify location of legend. To turn legend off, use legend_position = "none". Other
 #' options are "top", "bottom", "left", "right" (default).
 #'
 #' @param gridlines Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")
+#'
+#' @param x_pad Vector of 2 values. Specifies how much padding to add to x-axis on either side of axis.
+#' Default is c(0, 0)
 #'
 #' @param plot_title Logical. If TRUE (default) prints site name at top of figure. If FALSE,
 #' does not print site name. Only enabled when one site is selected.
@@ -70,9 +75,9 @@
 
 plotClimDrought <- function(park = "all",
                             years = format(Sys.Date(), format = "%Y"),
-                            months = 1:12, dom_county = TRUE,
+                            months = 1:12, dom_county = TRUE, end_date = NA,
                             legend_position = 'right', plot_title = TRUE,
-                            gridlines = 'none', legend_row = 1){
+                            gridlines = 'none', x_pad = c(0, 0), legend_row = 1){
 
   #--- error handling ---
   park <- match.arg(park, several.ok = TRUE,
@@ -86,8 +91,14 @@ plotClimDrought <- function(park = "all",
   stopifnot(class(dom_county) == "logical")
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
   stopifnot(class(legend_row) %in% c("numeric", "integer"), legend_row > 0)
+  stopifnot(length(x_pad) == 2)
+  if(!is.na(end_date)){
+    date_check <- as.Date(end_date, format = "%m/%d/%Y")
+    if(is.na(date_check)){stop("Wrong end_date format specified. Must be formatted as 'mm/dd/yyyy'.")}
+  }
+
   # Need to include park to get fips code
-  ddata <- getClimDrought(park = park, years = years, dom_county = dom_county) |>
+  ddata <- getClimDrought(park = park, years = years, dom_county = dom_county, end_date = end_date) |>
     mutate(dom_county = case_when(UnitCode == "ACAD" & County == "Knox County" ~ FALSE,
                                   UnitCode == "MORR" & County == "Somerset County" ~ FALSE,
                                   TRUE ~ TRUE)) |> unique() |>
@@ -150,7 +161,7 @@ plotClimDrought <- function(park = "all",
     # layers
     geom_area() +
     # axis format
-    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format), expand = c(0.02,0)) +
+    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format), expand = x_pad) +
     # layer formatting
     scale_fill_manual(values = c("#FFF000", "#FCD37F", "#FFAA00", "#E60000", "#730000"), name = "Drought Level") +
     scale_color_manual(values = c("#F0E100", "#E7C274", "#E19600", "#D10000", "#680000"), name = "Drought Level") +
@@ -174,7 +185,7 @@ plotClimDrought <- function(park = "all",
       theme(panel.grid.minor.x = element_line(color = 'grey'))}} +
     #panel.grid.minor.x = element_line(color = 'grey'))}} +
     labs(y = y_lab, x = x_lab) +
-    scale_y_continuous(n.breaks = 5, expand = c(0,0), limits = c(0,100)) +
+    scale_y_continuous(n.breaks = 5, expand = c(0,0), limits = c(0, 100)) +
      # facets
     {if(facet_park){facet_wrap(~UnitCode)}} + #change to county
     {if(facet_county){facet_wrap(~County)}} +
