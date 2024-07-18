@@ -264,7 +264,7 @@ plotClimTrend <- function(park = "all",
   } else if(year_len >= 30){"5 years"
   } else {"6 months"}
 
-  date_format <- ifelse(break_len %in% c("1 year", "2 years", "4 years"), "%Y",
+  date_format <- ifelse(break_len %in% c("1 year", "2 years", "4 years", "5 years"), "%Y",
                         ifelse(break_len %in% c("2 months", "4 months"), "%b-%Y",
                                "%b"))
 
