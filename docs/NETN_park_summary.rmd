@@ -166,7 +166,7 @@ plotClimCumPrecip(park = parkcode, years = yr1:yr_current, legend_position = "bo
 </br>
 
 ### Long-term Trends {.tabset}
-<h1>Historic Trends 1900:2023</h1>
+<h1>Historic Trends 1900:2024</h1>
 <details open><summary class='drop'>Temperature Trends</summary>
 ```{r fig.height=6.5, fig.width=12.05, results = "asis", fig.cap = temp_capT}
 plotClimTrend(park = parkcode, years = 1895:yr_current, 
