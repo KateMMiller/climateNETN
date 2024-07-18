@@ -76,6 +76,14 @@
 #' @param legend_position Specify location of legend. To turn legend off, use legend_position = "none" (Default). Other
 #' options are "top", "bottom", "left", "right".
 #'
+#' @param numcol Specify number of columns in the facet wrap, which is only enabled when either multiple years
+#' are specified or multiple parks. Default is 2.
+#'
+#' @param line_width Numeric. Specify the width of the line. Default is 1.
+#'
+#' @param x_pad Vector of 2 values. Specifies how much padding to add to x-axis on either side of axis.
+#' Default is c(0.01, 0)
+#'
 #' @param gridlines Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")
 #'
 #' @examples
@@ -115,6 +123,8 @@ plotClimTrend <- function(park = "all",
                           facet_param = FALSE,
                           palette = "viridis",
                           span = 0.3, plot_se = FALSE,
+                          numcol = 2, x_pad = c(0.01, 0),
+                          line_width = 1,
                           legend_position = 'none', gridlines = 'none'){
 
   #-- Error handling --
@@ -143,6 +153,10 @@ plotClimTrend <- function(park = "all",
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
   units <- match.arg(units, c("sci", "eng"))
   stopifnot(class(avg_window) %in% c("numeric", "integer"), avg_window >= 1)
+  stopifnot(class(numcol) %in% c("numeric", "integer"), numcol > 0)
+  stopifnot(class(line_width) %in% c("numeric", "integer"), line_width > 0)
+  stopifnot(length(x_pad) == 2)
+
   if(any(layers %in% "rollavg") & length(years)*2 < avg_window){
     stop("To use a rolling average, the avg_window must be at least 2x the number of years specified.")}
   #-- Compile data for plotting --
@@ -243,16 +257,17 @@ plotClimTrend <- function(park = "all",
 
   break_len <- if(year_len == 1){"1 month"
   } else if(year_len  %in% c(2, 3, 4) & mon_len <= 6){"2 months"
-  } else if(year_len == 2 & mon_len > 6){"4 months"
+  } else if(year_len == 2 & mon_len > 6){"3 months"
     #} else if(year_len > 4 & mon_len <= 6){"6 months"
-  } else if(year_len %in% c(4:19)){"1 year"
-  } else if(year_len %in% c(20:40)){"2 years"
-  } else if(year_len > 40){"5 years"
+  } else if(year_len %in% c(4, 5, 6)){"4 months"
+  } else if(year_len >= 6 & year_len < 30){"1 year"
+  } else if(year_len >= 30){"5 years"
   } else {"6 months"}
 
-  date_format <- ifelse(break_len %in% c("1 year", "2 years", "5 years"), "%Y",
-                        ifelse(break_len %in% c("2 months", "4 months"), "%b/%Y",
+  date_format <- ifelse(break_len %in% c("1 year", "2 years", "4 years"), "%Y",
+                        ifelse(break_len %in% c("2 months", "4 months"), "%b-%Y",
                                "%b"))
+
   datebreaks1 <- seq(min(clim_dat2$date2, na.rm = T), max(clim_dat2$date2, na.rm = T) + 30, by = break_len)
   # Drop first 5-year axis tick for rolling avg.
   datebreaks <- if(any(layers %in% "rollavg")){datebreaks1[2:length(datebreaks1)]} else {datebreaks1}
@@ -310,12 +325,12 @@ plotClimTrend <- function(park = "all",
       # layers
       {if(any(layers %in% "smooth"))
         geom_smooth(method = 'loess', formula = 'y ~ x', se = plot_se, span = span, alpha = 0.2) } +
-      {if(any(layers %in% "lines")) geom_line()} +
+      {if(any(layers %in% "lines")) geom_line(linewidth = line_width)} +
       {if(any(layers %in% "points")) geom_point(alpha = 0.6)} +
       {if(any(layers %in% "rollavg"))
         geom_line(data = roll_avg_dat, aes(x = date2, y = roll_avg,
-                                           group = param_label, color = param_label), linewidth = 1.5)} +
-      {if(any(layers %in% "bar")) geom_bar(stat = 'identity')} +
+                                           group = param_label, color = param_label), linewidth = line_width)} +
+      {if(any(layers %in% "bar")) geom_bar(stat = 'identity', alpha = 0.6)} +
       # themes
       theme_NETN() +
       theme(legend.position = legend_position,
@@ -328,9 +343,9 @@ plotClimTrend <- function(park = "all",
         theme(
           panel.grid.major.x = element_line(color = 'grey'))}} +#,
       # facets
-      {if(facetparam == FALSE & facetpark == TRUE){facet_wrap(~UnitName)}}+
-      {if(facetparam == TRUE & facetpark == FALSE){facet_wrap(~param_label, scales = facet_y)}}+
-      {if(facetparam == TRUE & facetpark == TRUE){facet_wrap(~UnitName + param_label)}}+
+      {if(facetparam == FALSE & facetpark == TRUE){facet_wrap(~UnitName, ncol = numcol)}}+
+      {if(facetparam == TRUE & facetpark == FALSE){facet_wrap(~param_label, scales = facet_y, ncol = numcol)}}+
+      {if(facetparam == TRUE & facetpark == TRUE){facet_wrap(~UnitName + param_label, ncol = numcol)}}+
       # palettes
       {if(any(vir_pal == "viridis")) scale_color_viridis_d(option = palette)} +
       {if(any(vir_pal == "viridis")) scale_fill_viridis_d(option = palette)} +
@@ -338,7 +353,7 @@ plotClimTrend <- function(park = "all",
       {if(any(vir_pal == "colbrew")) scale_color_manual(values = pal)} +
       # axis format
       scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format),
-                   expand = c(0.01, 0), limits = datelims) +
+                   expand = x_pad, limits = datelims) +
       scale_y_continuous(n.breaks = 8) +
       # labels/themes
       labs(x = NULL, y = ylab)

@@ -17,6 +17,9 @@ plotClimTrend(
   palette = "viridis",
   span = 0.3,
   plot_se = FALSE,
+  numcol = 2,
+  x_pad = c(0.01, 0),
+  line_width = 1,
   legend_position = "none",
   gridlines = "none"
 )
@@ -82,6 +85,14 @@ cause more smoothing (straighter lines). Smaller spans are wavier. Span can rang
 
 \item{plot_se}{Logical. If TRUE, will plot a standard error ribbon. If FALSE (Default), will not plot a ribbon.
 Only enabled if layers = "smooth" is specified.}
+
+\item{numcol}{Specify number of columns in the facet wrap, which is only enabled when either multiple years
+are specified or multiple parks. Default is 2.}
+
+\item{x_pad}{Vector of 2 values. Specifies how much padding to add to x-axis on either side of axis.
+Default is c(0.01, 0)}
+
+\item{line_width}{Numeric. Specify the width of the line. Default is 1.}
 
 \item{legend_position}{Specify location of legend. To turn legend off, use legend_position = "none" (Default). Other
 options are "top", "bottom", "left", "right".}
