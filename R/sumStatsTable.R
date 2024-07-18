@@ -214,7 +214,7 @@ sumStatsTable <- function(park = "ACAD",
     avg_df <- avg_df1[,avg_mon]
 
     paste0("Record: ", format(round(clim_comb2[,col], 1), nsmall = 1), " (", units, "); ",
-           "\n",
+           "\n\n",
            "Average: ", format(round(avg_df, 1), nsmall = 1), " (", units, ")",
            "\n")
   }
