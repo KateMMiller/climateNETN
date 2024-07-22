@@ -56,7 +56,10 @@
 #' @param layers Options are "points", "lines", "smooth", "rollavg", and "bar". By default, both points
 #' and lines will plot. The lines option connects each monthly value with a linear line. If you include
 #' lines and smooth, the loess-smoothed line will also plot. The rollavg will plot a rolling average (5-year default).
-#' The bar argument plots a bar chart.
+#' The bar argument plots a bar chart. Note that for precipitation, you can either include points, lines, or bar,
+#' or include rolling average because rolling average is an annual statistic. For temperature parameters,
+#' rolling averages are averaged at the annual level, then the rolling average is calculated. For precipitation,
+#' the annual statistic is total annual precipitation, then summarized with a rolling average.
 #'
 #' @param avg_window Number of years to include in the rolling average, if rollavg specified in layers. Default is 5,
 #' and must be >= 1. Currently only works at annual level, not monthly. Must also use a window that is smaller than
@@ -142,9 +145,9 @@ plotClimTrend <- function(park = "all",
   stopifnot(class(years) %in% c("numeric", "integer"), years >= 1895)
 
   parameter <- match.arg(parameter, c("all", "tmean", "tmin", "tmax", "ppt"), several.ok = TRUE)
-  facet_y <- if(any(parameter == "all")){"free_y"} else {"fixed"}
-
   if(any(parameter == "all")){parameter = c("tmean", "tmin", "tmax", "ppt")}
+
+  facet_y <- if(any(parameter == "all")){"free_y"} else {"fixed"}
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
   stopifnot(class(span) %in% "numeric")
   stopifnot(class(plot_se) %in% "logical")
@@ -265,7 +268,7 @@ plotClimTrend <- function(park = "all",
   } else {"6 months"}
 
   date_format <- ifelse(break_len %in% c("1 year", "2 years", "4 years", "5 years"), "%Y",
-                        ifelse(break_len %in% c("2 months", "4 months"), "%b-%Y",
+                        ifelse(break_len %in% c("2 months", "4 months", "6 months"), "%b-%Y",
                                "%b"))
 
   datebreaks1 <- seq(min(clim_dat2$date2, na.rm = T), max(clim_dat2$date2, na.rm = T) + 30, by = break_len)
@@ -301,26 +304,35 @@ plotClimTrend <- function(park = "all",
       ungroup() |>
       group_by(UnitCode, UnitName, param) |>
       mutate(roll_avg = zoo::rollmean(ann_avg, k = avg_window, fill = NA, align = "right"),
-             date2 = as.Date(paste0(year, "-", 07, "-", 02), format = "%Y-%m-%d"),
-             param = paste0(param, "_ra")) |> ungroup()
+             #date2 = as.Date(paste0(year, "-", 07, "-", 02), format = "%Y-%m-%d"),
+             param_ra = paste0(param, "_ra")) |> ungroup()
 
-    roll_avg_dat <- left_join(roll_avg_dat1, param_labels, by = 'param')
+    roll_avg_dat2 <- left_join(roll_avg_dat1, param_labels, by = 'param')
+    roll_avg_dat <- left_join(clim_dat_final |> select(UnitCode, year, param, date2) |> unique(),
+                              roll_avg_dat2, by = c("UnitCode", "year", "param"))
   }
 
-#-- Create plot --
+  # grp <- if(facetpark == TRUE & facetparam == FALSE){param_label
+  # } else if(facetpark == FALSE & facetparam == TRUE){UnitCode
+  # } else if(facetpark == TRUE & facetparam == TRUE){interaction(param_label, UnitCode)
+  # } else {param_label}
+  num_parks <- length(unique(clim_dat_final$UnitCode))
+  num_params <- length(unique(clim_dat_final$param_label))
+
+  #--- Create plot --
   climtrendplot <-
     ggplot(clim_dat_final, aes(x = date2, y = value,
-                               group = if(facetpark == TRUE & facetparam == FALSE){param_label
-                               } else if(facetpark == FALSE & facetparam == TRUE){UnitCode
-                               } else if(facetpark == TRUE & facetparam == TRUE){interaction(param_label, UnitCode)
+                               group = if(num_parks > 1 & num_params == 1){UnitCode
+                               } else if(num_parks == 1 & num_params > 1){param_label
+                               } else if(num_parks > 1 & num_params > 1){interaction(param_label, UnitCode)
                                } else {param_label},
-                               color = if(facetpark == TRUE & facetparam == FALSE){param_label
-                               } else if(facetpark == FALSE & facetparam == TRUE){UnitCode
-                               } else if(facetpark == TRUE & facetparam == TRUE){interaction(param_label, UnitCode)
+                               color = if(num_parks > 1 & num_params == 1){UnitCode
+                               } else if(num_parks == 1 & num_params > 1){param_label
+                               } else if(num_parks > 1 & num_params > 1){interaction(param_label, UnitCode)
                                } else {param_label},
-                               fill = if(facetpark == TRUE & facetparam == FALSE){param_label
-                               } else if(facetpark == FALSE & facetparam == TRUE){UnitCode
-                               } else if(facetpark == TRUE & facetparam == TRUE){interaction(param_label, UnitCode)
+                               fill = if(num_parks > 1 & num_params == 1){UnitCode
+                               } else if(num_parks == 1 & num_params > 1){param_label
+                               } else if(num_parks > 1 & num_params > 1){interaction(param_label, UnitCode)
                                } else {param_label})) +
       # layers
       {if(any(layers %in% "smooth"))
@@ -328,8 +340,9 @@ plotClimTrend <- function(park = "all",
       {if(any(layers %in% "lines")) geom_line(linewidth = line_width)} +
       {if(any(layers %in% "points")) geom_point(alpha = 0.6)} +
       {if(any(layers %in% "rollavg"))
-        geom_line(data = roll_avg_dat, aes(x = date2, y = roll_avg,
-                                           group = param_label, color = param_label), linewidth = line_width)} +
+        geom_line(data = roll_avg_dat, aes(x = date2, y = roll_avg),
+                  #                         group = param_label, color = param_label),
+                  linewidth = line_width)} +
       {if(any(layers %in% "bar")) geom_bar(stat = 'identity', alpha = 0.6)} +
       # themes
       theme_NETN() +

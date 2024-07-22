@@ -57,8 +57,7 @@
 #'
 #' @param layers Options are "points", "lines", or both for Annual Values. By default, only lines will plot.
 #'
-#' @param palette Color palette for plots. Options currently are 'viridis' (yellow - green - blue),
-#' magma (yellow, red, purple), plasma (brighter version of magma), turbo (rainbow), or create your
+#' @param palette Color palette for plots. Default is red and blue. Create your
 #' own by specifying 2 or more colors in quotes, like palette = c("red", "yellow", "blue"),
 #' or palette = c("yellow", "blue"). Hexcodes work too. If only 1 year is specified, only need to
 #' specify 1 color
@@ -114,7 +113,7 @@ plotClimComps <- function(park = "ACAD",
                           normal = "norm20cent",
                           parameter = 'tmean', units = "sci",
                           plot_title = TRUE,
-                          palette = "viridis", color_rev = FALSE,
+                          palette = c("red", "blue"), color_rev = FALSE,
                           legend_position = 'right',
                           gridlines = 'none',
                           include_error = TRUE,
@@ -131,13 +130,14 @@ plotClimComps <- function(park = "ACAD",
   stopifnot(class(months) %in% c("numeric", "integer"), months %in% c(1:12))
   layers <- match.arg(layers, c("points", "lines"), several.ok = TRUE)
   legend_position <- match.arg(legend_position, c("none", "bottom", "top", "right", "left"))
-  if(all(!palette %in% c("viridis", "magma", "plasma", "turbo")) & length(years) > 1){stopifnot(length(palette) > 1)}
+  if(length(years) > 1){stopifnot(length(palette) > 1)}
   stopifnot(class(plot_title) == "logical")
   normal <- match.arg(normal, c("norm20cent", "norm1990"))
   gridlines <- match.arg(gridlines, c("none", "grid_y", "grid_x", "both"))
   units <- match.arg(units, c("sci", "eng"))
   stopifnot(class(include_error) == 'logical')
   stopifnot(class(legend_row) %in% c("numeric", "integer"), legend_row > 0)
+
 
   #-- Compile data for plotting --
   # Clim data as annual monthly normal
@@ -263,22 +263,11 @@ plotClimComps <- function(park = "ACAD",
 
   year_breaks <- as.integer(years)
 
-  vir_pal = unique(ifelse(palette %in% c("viridis", "magma", "plasma", "turbo"), "viridis", "colbrew"))
-
-  if(any(palette %in% c("viridis", "magma", "plasma", "turbo"))){
-  vir_option <- switch(palette,
-                       viridis = 'viridis',
-                       magma = 'magma',
-                       plasma = 'plasma',
-                       turbo = 'turbo')}
-
   pal <-
-    if(vir_pal == "colbrew"){
       if(length(palette) > 1){
         colorRampPalette(palette)(length(unique(clim_curr_final$year)))
       } else { # hack to allow gradient to work with 1 color
         colorRampPalette(c(palette, palette))(length(unique(clim_curr_final$year)))
-      }
     }
 
   ptitle <- if(length(unique(clim_curr_final$UnitCode)) == 1 & plot_title == TRUE){
@@ -298,18 +287,18 @@ plotClimComps <- function(park = "ACAD",
 
   clim_plot <-
     ggplot() + theme_NETN() +
-    # layers for normals
-    {if(include_error == TRUE){
+      # layers for normals
+      {if(include_error == TRUE){
       geom_ribbon(data = avg_dat_dist_wide,
                   aes(ymin = lower, ymax = upper, x = mon, fill = grp, color = grp, group = grp))}} +
-    #{if(include_error == TRUE){
+     #{if(include_error == TRUE){
       scale_color_manual(values = band_df$col,
                          labels = band_df$labels, name = avg_name,
                          aesthetics = c("color", "fill")) +#}} +
-    geom_line(data = avg_dat_norm, aes(x = mon, y = value, group = grp, color = grp,
+      geom_line(data = avg_dat_norm, aes(x = mon, y = value, group = grp, color = grp,
                                        linetype = grp), linewidth = 1.5, linetype = 'longdash') +
-#    scale_linetype_manual(values = c("longdash"), name = NULL) +
-    # layers for annual data
+      # scale_linetype_manual(values = c("longdash"), name = NULL) +
+      # layers for annual data
       {if(any(layers %in% "lines"))
           geom_line(data = clim_curr_final,
                     aes(x = mon, y = value, group = factor(year),

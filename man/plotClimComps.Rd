@@ -13,7 +13,7 @@ plotClimComps(
   parameter = "tmean",
   units = "sci",
   plot_title = TRUE,
-  palette = "viridis",
+  palette = c("red", "blue"),
   color_rev = FALSE,
   legend_position = "right",
   gridlines = "none",
@@ -68,8 +68,7 @@ and precipitation units are in inches.}
 \item{plot_title}{Logical. If TRUE (default) prints site name at top of figure. If FALSE,
 does not print site name. Only enabled when one site is selected.}
 
-\item{palette}{Color palette for plots. Options currently are 'viridis' (yellow - green - blue),
-magma (yellow, red, purple), plasma (brighter version of magma), turbo (rainbow), or create your
+\item{palette}{Color palette for plots. Default is red and blue. Create your
 own by specifying 2 or more colors in quotes, like palette = c("red", "yellow", "blue"),
 or palette = c("yellow", "blue"). Hexcodes work too. If only 1 year is specified, only need to
 specify 1 color}

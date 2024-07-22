@@ -49,7 +49,10 @@ download months that are available from NOAA.}
 \item{layers}{Options are "points", "lines", "smooth", "rollavg", and "bar". By default, both points
 and lines will plot. The lines option connects each monthly value with a linear line. If you include
 lines and smooth, the loess-smoothed line will also plot. The rollavg will plot a rolling average (5-year default).
-The bar argument plots a bar chart.}
+The bar argument plots a bar chart. Note that for precipitation, you can either include points, lines, or bar,
+or include rolling average because rolling average is an annual statistic. For temperature parameters,
+rolling averages are averaged at the annual level, then the rolling average is calculated. For precipitation,
+the annual statistic is total annual precipitation, then summarized with a rolling average.}
 
 \item{avg_window}{Number of years to include in the rolling average, if rollavg specified in layers. Default is 5,
 and must be >= 1. Currently only works at annual level, not monthly. Must also use a window that is smaller than
