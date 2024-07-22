@@ -207,8 +207,6 @@ plotClimBar <- function(park = "all",
   year_len <- length(unique(clim_dat2$year))
   mon_len <- length(unique(clim_dat2$month))
 
-  head(clim_dat2)
-
   clim_dat2$date_chr <- as.character(clim_dat2$date2)
 
   seq_int <- if(any(parameter == "ppt")){20} else {2}
@@ -270,7 +268,7 @@ plotClimBar <- function(park = "all",
       scale_fill_manual(values = pal) +
       scale_color_manual(values = pal) +
       # axis format
-      scale_x_discrete(breaks = every_nth(n = 6), labels = clim_dat_final$year) +
+      scale_x_discrete(breaks = every_nth(n = 6), labels = clim_dat_final$year, expand = x_pad) +
       # scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format),
       #              expand = x_pad, limits = datelims) +
       scale_y_continuous(n.breaks = 8) +
