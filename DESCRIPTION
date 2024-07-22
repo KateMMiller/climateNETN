@@ -36,6 +36,7 @@ Collate:
     'getClimWStat.R'
     'theme_NETN.R'
     'plotClimAnom.R'
+    'plotClimBar.R'
     'plotClimComps.R'
     'plotClimCumPrecip.R'
     'plotClimDrought.R'
