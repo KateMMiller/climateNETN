@@ -232,7 +232,7 @@ plotClimRel <- function(park = "all",
   units_temp <- if(units == "sci"){"C"} else {"F"}
   units_ppt <- if(units == "sci"){"mm"} else {"in"}
 
-  ylabel = if(any(param %in% "ppt")){"+/- % of Precipitation"} else {paste0("+/- Degrees ", units_temp)}
+  ylabel = if(any(parameter %in% "ppt")){"+/- % of Precipitation"} else {paste0("+/- Degrees ", units_temp)}
 
   ylimits <- c(-max(abs(range(clim_comb$rel_dif))), max(abs(range(clim_comb$rel_dif))))
 
@@ -267,6 +267,9 @@ plotClimRel <- function(park = "all",
   clim_comb2$mon <- factor(clim_comb2$month,
                           levels = unique(clim_comb2$month),
                           labels = unique(month.abb[clim_comb2$month]), ordered = T)
+
+  clim_comb2$mon <- factor(format(clim_comb2$date, "%b"), month.abb, ordered = TRUE)
+  clim_comb2$mon <- clim_comb2$mon[,drop = T]
 
   clim_comb2$park_facet <- if(title_type == "UnitCode"){clim_comb2$UnitCode} else {clim_comb2$UnitName}
   facet_park <- ifelse(length(park) > 1, TRUE, FALSE)

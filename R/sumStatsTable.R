@@ -3,7 +3,7 @@
 #'
 #' @title sumStatsTable: Summarize climate records
 #'
-#' @importFrom dplyr filter group_by mutate select slice_max slice_min
+#' @importFrom dplyr arrange filter group_by mutate select slice_max slice_min
 #' @importFrom purrr list_rbind map
 #' @importFrom tidyr pivot_longer pivot_wider
 #'
@@ -92,9 +92,10 @@ sumStatsTable <- function(park = "ACAD",
 
   clim_dat$date <- as.Date(paste0(clim_dat$year, "-", clim_dat$month, "-", 15), format = "%Y-%m-%d")
 
-  avg_dat <- NETN_clim_norms |> dplyr::filter(UnitCode %in% park)
+  avg_dat <- NETN_clim_norms |> dplyr::filter(UnitCode %in% park) |> arrange(month)
   avg_dat$mon <- factor(avg_dat$month, levels = sort(unique(avg_dat$month)),
                         labels = unique(month.abb[avg_dat$month]))
+
 
   norm_cols <- if(normal == "norm20cent"){c("mon", "ppt_norm_1901_2000", "tmean_norm_1901_2000")
   } else {c("mon", "ppt_norm_1991_2020", "tmean_norm_1991_2020")}

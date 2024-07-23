@@ -205,8 +205,9 @@ plotClimComps <- function(park = "ACAD",
 
   clim_curr_final <- left_join(clim_curr_final, param_labels_annual, by = 'param')
 
-  clim_curr_final$mon <- factor(clim_curr_final$month, levels = unique(clim_curr_final$month),
-                                labels = unique(month.abb[clim_curr_final$month]), ordered = T)
+  clim_curr_final$mon <- factor(format(clim_curr_final$date, "%b"), month.abb, ordered = TRUE)
+  clim_curr_final$mon <- clim_curr_final$mon[,drop = T]
+
   clim_curr_final$param_label2 <- paste0(clim_curr_final$param_label, " (", clim_curr_final$year, ")")
 
   # Prepare normal data for plotting

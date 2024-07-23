@@ -192,10 +192,12 @@ plotClimCumPrecip <- function(park = "all",
     group_by(UnitCode, UnitName, year) |>
     mutate(cum_ppt_curr = cumsum(ppt))
 
-
   clim_curr$mon <- factor(clim_curr$month,
                           levels = unique(clim_curr$month),
                           labels = unique(month.abb[clim_curr$month]), ordered = T)
+
+  clim_curr$mon <- factor(format(clim_curr$date, "%b"), month.abb, ordered = TRUE)
+  clim_curr$mon <- clim_curr$mon[,drop = T]
 
   clim_curr_final <- if(units == "sci"){clim_curr
   } else {
