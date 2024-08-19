@@ -1,13 +1,13 @@
 #---------------------
-# Script compiled monthly gridded climate data for each park NETN_centroidsroid in NETN 1895 through 2024-05
+# Script compiled monthly gridded climate data for each park NETN_centroids in NETN 1895 through 2024-07
 #--------------------
-# iterate through years and months through 12/31/2005 to add historical context
+# iterate through years and months through 12/31/2023 to add historical context
 # To save time, I downloaded the full files from
 #   https://www.ncei.noaa.gov/thredds/catalog/data-in-development/nclimgrid/catalog.html
 # via their https option, then extracted the data below.
 
 library(tidyverse)
-#library(waterNETN)
+library(climateNETN)
 library(sf)
 library(raster)
 
@@ -65,9 +65,17 @@ usethis::use_data(NETN_clim_annual, overwrite = T)
 head(NETN_clim_annual)
 
 # Add new months
-new_mon <- getClimNOAA(year = 2024, months = 6)
-head(new_mon)
-head(NETN_clim_annual)
+
+library(tidyverse)
+library(climateNETN)
+library(sf)
+library(raster)
+
+data("NETN_centroids")
+data("NETN_clim_annual")
+netn_sf <- st_as_sf(NETN_centroids, coords = c("long", "lat"), crs = 4326)
+netn_bbox <- st_bbox(netn_sf)
+new_mon <- getClimNOAA(year = 2024, months = 7)
 
 NETN_clim_annual <- rbind(NETN_clim_annual, new_mon)
 usethis::use_data(NETN_clim_annual, overwrite = T)
