@@ -27,7 +27,7 @@ library(kableExtra)
 ```
 
 ```{r }
-# park = "MABI"; yr_start = 2006; yr_current = 2023;
+# park = "MABI"; yr_start = 2006; yr_current = 2024; child_env <- data.frame(end_date = "07/31/2024")
 parkcode <- child_env$park
 parkname <- child_env$park_df$UnitName[child_env$park_df$UnitCode == parkcode]
 ```
