@@ -149,9 +149,11 @@ getClimDrought <- function(park = "all",
                        "&statisticsType=1")
 
     dsci1 <- httr::GET(url_dsci)
-    dsci2 <- httr::content(dsci1, as = "text")
+    dsci <- suppressMessages(
+      httr::content(dsci1, as = "parsed") |> as.data.frame()
+    )
     #dsci <- read.table(textConnection(dsci2), sep = ",", header = T)
-    dsci <- jsonlite::fromJSON(dsci2) # DSCI ranges from 0 to 500 with 500 being most extreme drought
+    #dsci <- jsonlite::fromJSON(dsci2) # DSCI ranges from 0 to 500 with 500 being most extreme drought
     dsci$UnitCode <- park
     return(dsci)
   }
@@ -164,8 +166,10 @@ getClimDrought <- function(park = "all",
                         "&statisticsType=1")
 
     drgt1 <- httr::GET(url_drght)
-    drgt2 <- httr::content(drgt1, as = "text")
-    drgt <- jsonlite::fromJSON(drgt2)
+    drgt <- suppressMessages(
+      httr::content(drgt1, as = "parsed") |> as.data.frame()
+    )
+    #drgt <- jsonlite::fromJSON(drgt2)
     #drgt <- read.table(textConnection(drgt2), sep = ",", header = T)
     drgt$UnitCode <- park
     return(drgt)
@@ -173,7 +177,7 @@ getClimDrought <- function(park = "all",
 
   # Iterate if multiple sites
   dsci_full <- if(length(aoi) > 1){
-    map(aoi, \(x) getDSCI(x)) |> list_rbind()
+    purrr::map(aoi, \(x) getDSCI(x)) |> purrr::list_rbind()
     } else {getDSCI(aoi)}
 
   drgt_full <- if(length(aoi) > 1){
