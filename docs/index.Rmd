@@ -11,7 +11,7 @@ output:
 title: "NETN climate summary"
 params:
   year_current: 2024 # current year of data
-  end_date: "07/31/2024" # last day to plot 
+  end_date: "08/31/2024" # last day to plot 
 ---
 # {.tabset .tabset-pills}
 

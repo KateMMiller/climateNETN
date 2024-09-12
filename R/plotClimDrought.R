@@ -142,8 +142,12 @@ plotClimDrought <- function(park = "all",
   date_format <- ifelse(break_len %in% c("1 year", "2 years", "4 years"), "%Y",
                         ifelse(break_len %in% c("2 months", "3 months", "4 months"), "%b-%Y",
                                "%b"))
-
-  datebreaks <- seq(min(ddata3$Date), max(ddata3$Date) + 30, by = break_len)
+  if(length(years) == 1 & length(months) == 12){
+    max_date <- as.Date(paste0(years, "-12-31"), format = "%Y-%m-%d")
+    datebreaks <- seq(min(ddata3$Date), max_date, by = break_len)
+  } else {
+    datebreaks <- seq(min(ddata3$Date), max(ddata3$Date) + 30, by = break_len)
+  }
 
   num_parks <- length(unique(ddata3$UnitCode))
   num_county <- length(unique(ddata3$County))
@@ -161,7 +165,8 @@ plotClimDrought <- function(park = "all",
     # layers
     geom_area() +
     # axis format
-    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format), expand = x_pad) +
+    scale_x_date(breaks = datebreaks, limits = c(min(datebreaks), max(datebreaks)),
+                 labels = scales::label_date(date_format), expand = x_pad) +
     # layer formatting
     scale_fill_manual(values = c("#FFF000", "#FCD37F", "#FFAA00", "#E60000", "#730000"), name = "Drought Level") +
     scale_color_manual(values = c("#F0E100", "#E7C274", "#E19600", "#D10000", "#680000"), name = "Drought Level") +
