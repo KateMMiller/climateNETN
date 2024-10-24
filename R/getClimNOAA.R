@@ -130,7 +130,10 @@ getClimNOAA <- function(park = 'all', year = as.integer(format(Sys.Date(), "%Y")
   netn_final <- #if(length(months) > 1){
     purrr::map(months, function(x){
       tryCatch(getnoaa(yr = year, mon = x),
-               error = function(e){NULL})}) |> list_rbind()
+               error = function(e){NULL})}) |>
+    purrr::list_rbind()
+
+  if(nrow(netn_final) == 0){warning(paste0("Data not available for specified time period."))}
   # } else {tryCatch(getnoaa(yr = year, mon = months),
   #                    error = function(e){NULL})}
 
