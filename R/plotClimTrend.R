@@ -271,10 +271,18 @@ plotClimTrend <- function(park = "all",
                         ifelse(break_len %in% c("2 months", "4 months", "6 months"), "%b-%Y",
                                "%b"))
 
-  datebreaks1 <- seq(min(clim_dat2$date2, na.rm = T), max(clim_dat2$date2, na.rm = T) + 30, by = break_len)
+  if(length(years) == 1 & length(months) == 12){
+    max_date <- as.Date(paste0(years, "-12-31"), format = "%Y-%m-%d")
+    datebreaks1 <- seq(min(clim_dat2$date2), max_date, by = break_len)
+  } else {
+    datebreaks1 <- unique(c(seq(min(clim_dat2$date2), max(clim_dat2$date2) + 30, by = break_len),
+                           paste0(as.numeric(max(clim_dat2$year)) + 1, "01-01")))
+  }
+
+  #datebreaks1 <- seq(min(clim_dat2$date2, na.rm = T), max(clim_dat2$date2, na.rm = T) + 30, by = break_len)
   # Drop first 5-year axis tick for rolling avg.
   datebreaks <- if(any(layers %in% "rollavg")){datebreaks1[2:length(datebreaks1)]} else {datebreaks1}
-  datelims <- c(min(datebreaks), max(clim_dat2$date2))
+  datelims <- c(min(datebreaks), max(datebreaks))
 
   seq_int <- if(any(parameter == "ppt")){20} else {2}
 
