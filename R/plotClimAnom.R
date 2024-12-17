@@ -245,14 +245,24 @@ plotClimAnom <- function(park = "all",
   } else if(year_len == 2 & mon_len > 6){"3 months"
     #} else if(year_len > 4 & mon_len <= 6){"6 months"
   } else if(year_len %in% c(4, 5, 6)){"4 months"
-  } else if(year_len >= 6 & year_len < 20){"2 years"
-  } else if(year_len >= 20){"5 years"
+  } else if(year_len >= 6 & year_len < 30){"1 year"
+  } else if(year_len >= 30){"5 years"
   } else {"6 months"}
 
   date_format <- ifelse(break_len %in% c("1 year", "2 years", "5 years"), "%Y",
                         ifelse(break_len %in% c("2 months", "3 months", "4 months"), "%b-%Y",
                                                 "%b"))
-  datebreaks <- seq(min(clim_comb4$date2, na.rm = T), max(clim_comb4$date2, na.rm = T) + 30, by = break_len)
+  # datebreaks <- seq(min(clim_comb4$date2, na.rm = T), max(clim_comb4$date2, na.rm = T) + 30, by = break_len)
+
+  if(length(years) == 1 & length(months) == 12){
+    max_date <- as.Date(paste0(years, "-12-31"), format = "%Y-%m-%d")
+    datebreaks <- seq(min(clim_comb4$date2), max_date, by = break_len)
+  } else {
+    datebreaks <- unique(c(seq(min(clim_comb4$date2), max(clim_comb4$date2) + 30, by = break_len),
+                            paste0(as.numeric(max(clim_comb4$year)) + 1, "01-01")))
+  }
+
+  datelims <- c(min(datebreaks), max(datebreaks))
 
   ylabel <- if(length(parameter) > 1){"Deviation from Baseline"
     } else {
@@ -311,14 +321,15 @@ anomplot <-
       theme(
         panel.grid.major.x = element_line(color = 'grey'))}} +
     # Axes
-    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format), expand = c(0.01, 0.01)) +
+    scale_x_date(breaks = datebreaks, labels = scales::label_date(date_format), expand = c(0.01, 0.01),
+                 limits = datelims) +
    {if(!parameter %in% "ppt_pct")
      scale_y_continuous(n.breaks = 8, limits = yrange,
                         sec.axis = dup_axis(name = NULL, breaks = 0, labels = "Average  ")) }  +
    {if(parameter %in% "ppt_pct")
       scale_y_continuous(n.breaks = 8, limits = yrange,
         sec.axis = dup_axis(name = NULL, breaks = ybreaks_pct$pct, labels = ybreaks_pct$label))} +
-    # Legend order
+      # Legend order
     guides(linetype = guide_legend(order = 2),
            fill = guide_legend(order = 1),
            color = guide_legend(order = 1))
