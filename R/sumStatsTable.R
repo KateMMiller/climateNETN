@@ -132,14 +132,14 @@ sumStatsTable <- function(park = "ACAD",
   mon_next_day <- as.numeric(format(Sys.Date() + 1, "%m"))
   mon_comp <- ifelse(mon_next_day > mon_curr, sprintf("%02d", mon_curr),
                      sprintf("%02d", mon_curr - 1))
-  latest_date_comp <- as.Date(paste0(format(Sys.Date(), "%Y"), "-", mon_comp, "-", 15))
+  latest_date_comp <- as.Date(paste0(format(Sys.Date(), "%Y"), "-", mon_comp, "-", 15), format = "%Y-%m-%d")
   latest_date_data <- as.Date(max(date_range_data), format = "%Y-%m-%d")
 
   new_dates <- as.Date(new_dates1[new_dates1 <= latest_date_comp], format = "%Y-%m-%d")
   #new_dates <- as.Date(c("2024-05-15", "2024-04-15"), format = "%Y-%m-%d")
 
   clim_dat2 <-
-    if(length(new_dates) == 0){clim_dat
+    if(length(new_dates) == 0 | is.na(new_dates)){clim_dat
     } else {
       new_months <- as.numeric(format(new_dates, "%m"))
       new_years <- as.numeric(format(new_dates, "%Y"))
