@@ -27,14 +27,17 @@ library(grid)
 library(gridExtra)
 
 yr_current <- params$year_current
-#park_list <- c("MIMA")
+# params = data.frame(year_current = 2024, end_date = "11/30/2024")
+# park = "ACAD"
 
 child_env <- new.env()
 
-child_env$yr_current <- yr_current
+child_env$yr_current <- as.numeric(yr_current)
 child_env$netn_list <- c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
 child_env$park_df <- NETN_centroids[,c("UnitCode", "UnitName")]
-child_env$end_date <- params$end_date
+child_env$end_date <-  as.Date(params$end_date, format = "%m/%d/%Y", 
+                               tryFormats = c( "%m/%d/%Y", "%m-%d-%Y", "%Y/%m/%d"))
+
 ```
 
 ```{r results = 'asis', include = F, cache = F, eval = T}
