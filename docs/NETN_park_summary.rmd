@@ -74,7 +74,7 @@ grid.arrange(temp_comp, temp_anom, nrow = 1)
 <br>
 <details open><summary class='drop'>Precipitation</summary>
 ```{r fig.height=7, fig.width=13, results = 'asis', fig.cap = anom_comp_cap1}
-ppt_comp <- plotClimComps(park = park,years= yr_current, palette = 'blue', parameter = c('ppt'),
+ppt_comp <- plotClimComps(park = parkcode, years= yr_current, palette = 'blue', parameter = c('ppt'),
                            legend_position = "bottom", plot_title = F, units = "eng", 
                           layers = c("points", "lines"), legend_row = 2)
 ppt_anom <- plotClimAnom(park = parkcode, years = yr_current, parameter = 'ppt_pct',
@@ -87,10 +87,10 @@ grid.arrange(ppt_comp, ppt_anom, nrow = 1)
 <br>
 <details open><summary class='drop'>Drought Condition</summary>
 ```{r fig.height=7, fig.width=13, results = 'asis', fig.cap = drgt_cumppt_cap1}
-enddate <- as.Date(child_env$end_date, format = "%m/%d/%Y")
+enddate <- as.Date(child_env$end_date, format = "%m/%d/%Y", tryFormats = c( "%m/%d/%Y", "%m-%d-%Y", "%Y/%m/%d"))
 drgt <- plotClimDrought(park = parkcode, years = yr_current, 
                         legend_position = 'bottom', legend_row = 2, 
-                        end_date = child_env$end_date, x_pad = c(0.05, 0.05)) + 
+                        end_date = enddate, x_pad = c(0.05, 0.05)) + 
         geom_vline(xintercept = as.Date(enddate, format = "%m/%d/%Y"), linetype = "dashed")
 
 pptcum <- plotClimCumPrecip(park = parkcode, years = yr_current, 
