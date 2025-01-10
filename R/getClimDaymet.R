@@ -101,7 +101,7 @@ getClimDaymet <- function(park = "all",
     dat4$UnitCode = unitcode
     dat4$dm_tile = tile
     dat4$altitude = altitude
-    dat4$Date <- as.Date(dat4$yday, origin = paste0(dat4$year, "-01-01"))
+    dat4$Date <- as.Date(dat4$yday, origin = paste0(dat4$year, "-01-01"), format = "%Y-%m-%d")
     dat4 <- dat4[, c("UnitCode", "dm_tile", "Latitude", "Longitude", "altitude",
                      "Date", "year", "yday",
                      "dayl_s", "prcp_mmday", "srad_Wm2", "swe_kgm2", "tmax_degc",

@@ -141,7 +141,7 @@ plotClimBar <- function(park = "all",
   mon_curr <- as.numeric(format(Sys.Date(), "%m"))
   mon_next_day <- as.numeric(format(Sys.Date() + 1, "%m"))
   mon_comp <- ifelse(mon_next_day > mon_curr, sprintf("%02d", mon_curr), sprintf("%02d", mon_curr - 1))
-  latest_date_comp <- as.Date(paste0(format(Sys.Date(), "%Y"), "-", mon_comp, "-", 15))
+  latest_date_comp <- as.Date(paste0(format(Sys.Date(), "%Y"), "-", mon_comp, "-", 15), format = "%Y-%m-%d")
   latest_date_data <- as.Date(max(date_range_data), format = "%Y-%m-%d")
 
   new_dates <- as.Date(new_dates1[new_dates1 <= latest_date_comp], format = "%Y-%m-%d")

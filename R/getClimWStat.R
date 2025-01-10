@@ -54,7 +54,7 @@
 #' @export
 
 getClimWStat <- function(park = "all",
-                         years = c(2006:2023),
+                         years = c(2006:2024),
                          filepath = NA,
                          export = FALSE){
 
