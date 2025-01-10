@@ -139,7 +139,7 @@ sumStatsTable <- function(park = "ACAD",
   #new_dates <- as.Date(c("2024-05-15", "2024-04-15"), format = "%Y-%m-%d")
 
   clim_dat2 <-
-    if(length(new_dates) == 0 | is.na(new_dates)){clim_dat
+    if(length(new_dates) == 0 || is.na(new_dates)){clim_dat
     } else {
       new_months <- as.numeric(format(new_dates, "%m"))
       new_years <- as.numeric(format(new_dates, "%Y"))

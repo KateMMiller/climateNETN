@@ -11,7 +11,7 @@ output:
 title: "NETN climate summary"
 params:
   year_current: 2024 # current year of data
-  end_date: "11/30/2024" # last day to plot 
+  end_date: "12/31/2024" # last day to plot 
 ---
 # {.tabset .tabset-pills}
 
@@ -27,8 +27,9 @@ library(grid)
 library(gridExtra)
 
 yr_current <- params$year_current
-# params = data.frame(year_current = 2024, end_date = "11/30/2024")
+# params = data.frame(year_current = 2024, end_date = "12/31/2024")
 # park = "ACAD"
+# yr_current = 2024
 
 child_env <- new.env()
 
