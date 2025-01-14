@@ -141,8 +141,8 @@ plotClimComps <- function(park = "ACAD",
 
   #-- Compile data for plotting --
   # Clim data as annual monthly normal
-  data("NETN_clim_annual")
-  data("NETN_clim_norms")
+  data("NETN_clim_annual", package = "climateNETN")
+  data("NETN_clim_norms", package = "climateNETN")
 
   # Prepare annual data for plotting
   clim_dat <- NETN_clim_annual |> dplyr::filter(UnitCode %in% park)

@@ -115,8 +115,8 @@ plotClimAnom <- function(park = "all",
 
   #-- Compile data for plotting --
   # Clim data as annual monthly normal
-  data("NETN_clim_annual")
-  data("NETN_clim_norms")
+  data("NETN_clim_annual", package = "climateNETN")
+  data("NETN_clim_norms", package = "climateNETN")
 
   clim_dat <- NETN_clim_annual |> filter(UnitCode %in% park)
   clim_dat2 <- clim_dat |> filter(year %in% years) |> filter(month %in% months)

@@ -72,7 +72,7 @@ NETN_bbox <- data.frame(lat = c(47.38, 44.80, 38.71, 43.40, 39.994187),
                         long = c(-68.71, -66.67, -74.84, -75.54, -80.521832)) |>
              st_as_sf(coords = c("long", "lat"), crs = 4326) |> st_bbox()
 # Find center coordinates of park box
-data("NETN_centroids")
+data("NETN_centroids", package = "climateNETN")
 long_cent <- mean(c(bbox$LongE, bbox$LongW))
 lat_cent <- mean(c(bbox$LatN, bbox$LatS))
 

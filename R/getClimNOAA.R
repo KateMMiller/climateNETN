@@ -80,7 +80,7 @@ getClimNOAA <- function(park = 'all', year = as.integer(format(Sys.Date(), "%Y")
 
   #--- compile data ---
   # Create list of lat/longs to generate
-  data("NETN_centroids")
+  data("NETN_centroids", package = "climateNETN")
 
   cent <- if(any(park == "all")){NETN_centroids
     } else {NETN_centroids[NETN_centroids$UnitCode %in% park,]}

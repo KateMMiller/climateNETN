@@ -95,7 +95,7 @@ getClimDrought <- function(park = "all",
     stop("Package 'jsonlite' needed to download weather station data. Please install it.", call. = FALSE)
   }
 
-  data("closest_WS")
+  data("closest_WS", package = "climateNETN")
 
   # Set up start and end dates and FIPS based on specified arguments
   current_year <- format(Sys.Date(), "%Y")

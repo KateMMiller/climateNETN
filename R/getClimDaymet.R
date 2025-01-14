@@ -64,7 +64,7 @@ getClimDaymet <- function(park = "all",
 
   #--- compile data ---
   # Create list of lat/longs to generate
-  data("closest_WS")
+  data("closest_WS", package = "climateNETN")
   sites1 <- subset(closest_WS, !SubUnit %in% c("IAH", "SCH", "NJB"))
   sites <- sites1[, c("UnitCode", "park_lat", "park_long")]
   colnames(sites) <- c("site", "lat", "long")
