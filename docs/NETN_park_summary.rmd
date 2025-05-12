@@ -11,7 +11,7 @@ output:
 title: "NETN water summary"
 params:
   park: MABI # 4-letter park code
-  year_current: 2024 # current year of data
+  year_current: 2025 # current year of data
 ---
 
 ```{r include = FALSE}

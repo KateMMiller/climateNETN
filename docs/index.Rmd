@@ -10,8 +10,8 @@ output:
     self_contained: yes
 title: "NETN climate summary"
 params:
-  year_current: 2024 # current year of data
-  end_date: "12/31/2024" # last day to plot 
+  year_current: 2025 # current year of data
+  end_date: "04/30/2025" # last day to plot 
 ---
 # {.tabset .tabset-pills}
 
@@ -90,11 +90,7 @@ leaflet(height = 700) %>%
     # set default view of park
     setView(lng = long_cent,
             lat = lat_cent,
-            zoom = 7) %>% #bbox$Zoom[bbox$ParkCode == park]) %>%
-    # setMaxBounds(lng1 = bbox[bbox$ParkCode == parkcode,]$LongE,
-    #              lng2 = bbox[bbox$ParkCode == parkcode,]$LongW,
-    #              lat1 = bbox[bbox$ParkCode == parkcode,]$LatN,
-    #              lat2 = bbox[bbox$ParkCode == parkcode,]$LatS) %>%
+            zoom = 7) %>% 
     # add map tiles
     addTiles(group="Map", urlTemplate = NPSbasic) %>% 
     addTiles(group="Imagery", urlTemplate = ESRIimagery) %>% 

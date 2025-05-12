@@ -161,7 +161,7 @@ plotClimAnom <- function(park = "all",
   #new_dates <- as.Date(c("2024-05-15", "2024-04-15"), format = "%Y-%m-%d")
 
   clim_dat <-
-    if(length(new_dates) == 0 || is.na(new_dates)){clim_dat_long
+    if(length(new_dates) == 0 || all(is.na(new_dates))){clim_dat_long
     } else {
       new_months <- as.numeric(format(new_dates, "%m"))
       new_years <- as.numeric(format(new_dates, "%Y"))
@@ -256,7 +256,8 @@ plotClimAnom <- function(park = "all",
 
   if(length(years) == 1 & length(months) == 12){
     max_date <- as.Date(paste0(years, "-12-31"), format = "%Y-%m-%d")
-    datebreaks <- seq(min(clim_comb4$date2), max_date, by = break_len)
+    min_date <- as.Date(paste0(years, "-01-01"), format= "%Y-%m-%d")
+    datebreaks <- seq(min_date, max_date, by = break_len)
   } else {
     datebreaks <- unique(c(seq(min(clim_comb4$date2), max(clim_comb4$date2) + 30, by = break_len),
                             paste0(as.numeric(max(clim_comb4$year)) + 1, "01-01")))
@@ -279,7 +280,7 @@ plotClimAnom <- function(park = "all",
   avglabel <- ifelse(normal == "norm20cent", "Baseline: 1901 - 2000", "Baseline: 1991 - 2020")
 
   yrange <- if(parameter == "ppt_pct"){
-    c(-100, max(clim_comb4$anom))
+    c(-100, max(c(clim_comb4$anom, 100)))
   } else {c(-max(clim_comb4$anom), max(clim_comb4$anom))}
 
   ybreaks_pct1 = data.frame(pct = c(-100, 0, 100, 200, 300, 400, 500),
