@@ -75,8 +75,8 @@ data("NETN_centroids")
 data("NETN_clim_annual")
 netn_sf <- st_as_sf(NETN_centroids, coords = c("long", "lat"), crs = 4326)
 netn_bbox <- st_bbox(netn_sf)
-new_mon <- getClimNOAA(year = 2024, months = 9)
+new_mon <- getClimNOAA(year = 2025, months = 8)
 head(new_mon)
 NETN_clim_annual <- rbind(NETN_clim_annual, new_mon)
 usethis::use_data(NETN_clim_annual, overwrite = T)
-
+# Once this is complete, rebuild package, then commit changes to github.
