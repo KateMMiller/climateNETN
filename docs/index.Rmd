@@ -12,6 +12,7 @@ title: "NETN climate summary"
 params:
   year_current: 2025 # current year of data
   end_date: "09/30/2025" # last day to plot 
+
 ---
 # {.tabset .tabset-pills}
 
@@ -27,14 +28,18 @@ library(grid)
 library(gridExtra)
 
 yr_current <- params$year_current
-#park_list <- c("MIMA")
+# params = data.frame(year_current = 2024, end_date = "12/31/2024")
+# park = "ACAD"
+# yr_current = 2024
 
 child_env <- new.env()
 
-child_env$yr_current <- yr_current
+child_env$yr_current <- as.numeric(yr_current)
 child_env$netn_list <- c("ACAD", "BOHA", "MABI", "MIMA", "MORR", "ROVA", "SAGA", "SAIR", "SARA", "WEFA")  
 child_env$park_df <- NETN_centroids[,c("UnitCode", "UnitName")]
-child_env$end_date <- params$end_date
+child_env$end_date <-  as.Date(params$end_date, format = "%m/%d/%Y", 
+                               tryFormats = c( "%m/%d/%Y", "%m-%d-%Y", "%Y/%m/%d"))
+
 ```
 
 ```{r results = 'asis', include = F, cache = F, eval = T}
@@ -68,7 +73,7 @@ NETN_bbox <- data.frame(lat = c(47.38, 44.80, 38.71, 43.40, 39.994187),
                         long = c(-68.71, -66.67, -74.84, -75.54, -80.521832)) |>
              st_as_sf(coords = c("long", "lat"), crs = 4326) |> st_bbox()
 # Find center coordinates of park box
-data("NETN_centroids")
+data("NETN_centroids", package = "climateNETN")
 long_cent <- mean(c(bbox$LongE, bbox$LongW))
 lat_cent <- mean(c(bbox$LatN, bbox$LatS))
 
@@ -86,11 +91,7 @@ leaflet(height = 700) %>%
     # set default view of park
     setView(lng = long_cent,
             lat = lat_cent,
-            zoom = 7) %>% #bbox$Zoom[bbox$ParkCode == park]) %>%
-    # setMaxBounds(lng1 = bbox[bbox$ParkCode == parkcode,]$LongE,
-    #              lng2 = bbox[bbox$ParkCode == parkcode,]$LongW,
-    #              lat1 = bbox[bbox$ParkCode == parkcode,]$LatN,
-    #              lat2 = bbox[bbox$ParkCode == parkcode,]$LatS) %>%
+            zoom = 7) %>% 
     # add map tiles
     addTiles(group="Map", urlTemplate = NPSbasic) %>% 
     addTiles(group="Imagery", urlTemplate = ESRIimagery) %>% 

@@ -4,7 +4,7 @@
 \alias{getClimWStat}
 \title{getClimWStat: Download daily data from nearest weather station}
 \usage{
-getClimWStat(park = "all", years = c(2006:2023), filepath = NA, export = FALSE)
+getClimWStat(park = "all", years = c(2006:2024), filepath = NA, export = FALSE)
 }
 \arguments{
 \item{park}{Combine data from all parks or one or more parks at a time. Valid inputs:

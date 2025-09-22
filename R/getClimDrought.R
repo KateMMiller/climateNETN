@@ -95,7 +95,7 @@ getClimDrought <- function(park = "all",
     stop("Package 'jsonlite' needed to download weather station data. Please install it.", call. = FALSE)
   }
 
-  data("closest_WS")
+  data("closest_WS", package = "climateNETN")
 
   # Set up start and end dates and FIPS based on specified arguments
   current_year <- format(Sys.Date(), "%Y")
@@ -124,7 +124,7 @@ getClimDrought <- function(park = "all",
       format(as.Date(paste0("12/31/", max(years)), format = "%m/%d/%Y"), "%m/%d/%Y")
     } else if(!is.na(week_start)){format(as.Date(start_tues, format = "%m/%d/%Y") + 6, "%m/%d/%Y")}
     } else {
-      format(as.Date(end_date, format = "%m/%d/%Y"))
+      format(as.Date(end_date, format = "%m/%d/%Y"), format = "%m/%d/%Y")
     }
 
   # Set up aoi and filters for iterations
