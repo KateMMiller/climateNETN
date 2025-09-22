@@ -30,13 +30,14 @@ library(kableExtra)
 # park = "MABI"; yr_start = 2006; yr_current = 2024; child_env <- data.frame(end_date = "07/31/2024")
 parkcode <- child_env$park
 parkname <- child_env$park_df$UnitName[child_env$park_df$UnitCode == parkcode]
+end_date <- child_env$end_date
 ```
 
 ##  `r park` {.tabset}
 
 ```{r}
 yr5 = yr_current - 4
-drgt_cumppt_cap1 <- paste0("Weekly drought condition for ", yr_current, " based on proportion of a park's predominant county in each drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a> (left). Cumulative annual precipitation in ", yr_current, " by month compared to the 20th century baseline (right). The dashed line indicates the latest date included in the drought index. Total monthly precipitation data are derived from  <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA monthly NClimGrid gridded climate data</a> extracted for a given park's geographic centroid.") 
+drgt_cumppt_cap1 <- paste0("Weekly drought condition for ", yr_current, " based on proportion of a park's predominant county in each drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a> (left). Cumulative annual precipitation in ", yr_current, " by month compared to the 20th century baseline (right). The dashed line indicates the latest date (", end_date, ") included in the drought index. Total monthly precipitation data are derived from  <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA monthly NClimGrid gridded climate data</a> extracted for a given park's geographic centroid.") 
 
 anom_comp_cap1 <- paste0("Current (", yr_current, ") monthly climate data (solid) compared to historic climate baselines (left). Climate baselines include minimum and maximum (light grey), 95% distribution (grey), and middle 50% distribution (dark grey) of values recorded from 1901 to 2000, along with the baseline average (black line). Monthly deviations from historic baselines (right) in ", yr_current, " with positive (red) bars indicating above average deviations, and negative (blue) bars indicating below average deviations. Historic baselines are based on <a href='https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals'>NOAA 20th century normals</a> for a given park's geographic centroid. Current monthly data are derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.") 
 

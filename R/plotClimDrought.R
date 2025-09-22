@@ -145,7 +145,9 @@ plotClimDrought <- function(park = "all",
 
   if(length(years) == 1 & length(months) == 12){
     max_date <- as.Date(paste0(years, "-12-31"), format = "%Y-%m-%d")
-    datebreaks <- seq(min(ddata3$Date), max_date, by = break_len)
+    #datebreaks <- seq(min(ddata3$Date), max_date, by = break_len)
+    datebreaks <- seq(as.Date(paste0(years, "-01-01"), format = "%Y-%m-%d"),
+                      max_date, by = break_len)
   } else {
     datebreaks <- unique(c(seq(min(ddata3$Date), max(ddata3$Date) + 30, by = break_len),
                            paste0(as.numeric(max(ddata3$year)) + 1, "01-01")))
