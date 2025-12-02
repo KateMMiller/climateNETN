@@ -130,8 +130,8 @@ plotClimRel <- function(park = "all",
 
   #-- Compile data for plotting --
   # Clim data as annual monthly normal
-  data("NETN_clim_annual")
-  data("NETN_clim_norms")
+  data("NETN_clim_annual", package = "climateNETN")
+  data("NETN_clim_norms", package = "climateNETN")
 
   clim_dat <- NETN_clim_annual |> filter(UnitCode %in% park)
   clim_dat2 <- clim_dat |> filter(year %in% years) |> filter(month %in% months)
@@ -152,14 +152,14 @@ plotClimRel <- function(park = "all",
   mon_curr <- as.numeric(format(Sys.Date(), "%m"))
   mon_next_day <- as.numeric(format(Sys.Date() + 1, "%m"))
   mon_comp <- ifelse(mon_next_day > mon_curr, sprintf("%02d", mon_curr), sprintf("%02d", mon_curr - 1))
-  latest_date_comp <- as.Date(paste0(format(Sys.Date(), "%Y"), "-", mon_comp, "-", 15))
+  latest_date_comp <- as.Date(paste0(format(Sys.Date(), "%Y"), "-", mon_comp, "-", 15), format = "%Y-%m-%d")
   latest_date_data <- as.Date(max(date_range_data), format = "%Y-%m-%d")
 
   new_dates <- as.Date(new_dates1[new_dates1 <= latest_date_comp], format = "%Y-%m-%d")
   #new_dates <- as.Date(c("2024-05-15", "2024-04-15"), format = "%Y-%m-%d")
 
   clim_dat_final1 <-
-    if(length(new_dates) == 0){clim_dat_long
+    if(length(new_dates) == 0 || all(is.na(new_dates))){clim_dat_long
     } else {
       new_months <- as.numeric(format(new_dates, "%m"))
       new_years <- as.numeric(format(new_dates, "%Y"))

@@ -54,7 +54,7 @@
 #' @export
 
 getClimWStat <- function(park = "all",
-                         years = c(2006:2023),
+                         years = c(2006:2024),
                          filepath = NA,
                          export = FALSE){
 
@@ -99,7 +99,7 @@ getClimWStat <- function(park = "all",
   #
   # site_list <- unique(sites$SiteCode)
 
-  data("closest_WS")
+  data("closest_WS", package = "climateNETN")
 
   # Drop smaller subunits and filter only selectd parks.
   parks_ws1 <- closest_WS[!closest_WS$SubUnit %in% c("IAH", "SCH", "NJB"),]

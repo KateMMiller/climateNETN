@@ -79,4 +79,4 @@ new_mon <- getClimNOAA(year = 2025, months = 9:10)
 head(new_mon)
 NETN_clim_annual <- rbind(NETN_clim_annual, new_mon)
 usethis::use_data(NETN_clim_annual, overwrite = T)
-
+# Once this is complete, rebuild package, then commit changes to github.

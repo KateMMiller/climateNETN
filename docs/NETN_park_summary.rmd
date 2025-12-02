@@ -11,7 +11,7 @@ output:
 title: "NETN water summary"
 params:
   park: MABI # 4-letter park code
-  year_current: 2024 # current year of data
+  year_current: 2025 # current year of data
 ---
 
 ```{r include = FALSE}
@@ -30,13 +30,14 @@ library(kableExtra)
 # park = "MABI"; yr_start = 2006; yr_current = 2024; child_env <- data.frame(end_date = "07/31/2024")
 parkcode <- child_env$park
 parkname <- child_env$park_df$UnitName[child_env$park_df$UnitCode == parkcode]
+end_date <- child_env$end_date
 ```
 
 ##  `r park` {.tabset}
 
 ```{r}
 yr5 = yr_current - 4
-drgt_cumppt_cap1 <- paste0("Weekly drought condition for ", yr_current, " based on proportion of a park's predominant county in each drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a> (left). Cumulative annual precipitation in ", yr_current, " by month compared to the 20th century baseline (right). The dashed line indicates the latest date included in the drought index. Total monthly precipitation data are derived from  <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA monthly NClimGrid gridded climate data</a> extracted for a given park's geographic centroid.") 
+drgt_cumppt_cap1 <- paste0("Weekly drought condition for ", yr_current, " based on proportion of a park's predominant county in each drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a> (left). Cumulative annual precipitation in ", yr_current, " by month compared to the 20th century baseline (right). The dashed line indicates the latest date (", end_date, ") included in the drought index. Total monthly precipitation data are derived from  <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA monthly NClimGrid gridded climate data</a> extracted for a given park's geographic centroid.") 
 
 anom_comp_cap1 <- paste0("Current (", yr_current, ") monthly climate data (solid) compared to historic climate baselines (left). Climate baselines include minimum and maximum (light grey), 95% distribution (grey), and middle 50% distribution (dark grey) of values recorded from 1901 to 2000, along with the baseline average (black line). Monthly deviations from historic baselines (right) in ", yr_current, " with positive (red) bars indicating above average deviations, and negative (blue) bars indicating below average deviations. Historic baselines are based on <a href='https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals'>NOAA 20th century normals</a> for a given park's geographic centroid. Current monthly data are derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.") 
 
@@ -44,7 +45,7 @@ anom_cap5 <- paste0("Monthly deviations from historic baselines for past 5 years
 
 cum_cap5 <- paste0("Cumulative annual precipitation by month for past 5 years (", yr5, ":", yr_current, " ) compared to the 20th century baseline. Total monthly precipitation data are derived from  <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA monthly NClimGrid gridded climate data</a> extracted for a given park's geographic centroid.")
 
-drgt_cap5 <- paste0("Last 5 years (", yr5, ":", yr_current, ") of monthly average temperature (top), monthly total precipitation (middle), and weekly drought condition (bottom) based on proportion of a park's predominant county by drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a>.") 
+drgt_cap5 <- paste0("Last 5 years (", yr5, ":", yr_current, ") of monthly average temperature (top), monthly total precipitation (middle), and weekly drought condition (bottom) based on proportion of a park's predominant county by drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a>. The dashed line indicates the latest date included in the drought index.") 
 
 temp_capT <- paste0("5-year rolling average annual minimum, maximum, and average temperature trends from 1900 to ", yr_current, " by month derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
 
@@ -52,7 +53,7 @@ ppt_capT <- paste0("5-year rolling average annual total precipitation trends fro
 
 anom_capT <- paste0("Monthly deviations from historic baselines, with positive (red) bars, indicated above average deviations, and negative (blue) bars indicating below average deviations for 1900 to ", yr_current, ". Historic baselines are based on <a href='https://www.ncei.noaa.gov/products/land-based-station/us-climate-normals'>NOAA 20th century normals</a> for a given park's geographic centroid. Monthly data are derived from <a href='https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=gov.noaa.ncdc:C00332'>NOAA NClimGrid </a> gridded climate dataset extracted for a given park's geographic centroid.")
 
-drgt_capT <- paste0("Long-term trends (2000:", yr_current, ") in weekly drought condition based on proportion of a park's predominant county by drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a>. Note that drought data are only available from 2000 to present.") 
+drgt_capT <- paste0("Long-term trends (2000:", yr_current, ") in weekly drought condition based on proportion of a park's predominant county by drought level using the <a href='https://droughtmonitor.unl.edu/'>U.S. Drought Monitor</a>. The dashed line indicates the latest date included in the drought index. Note that drought data are only available from 2000 to present.") 
 
 ```
 
@@ -74,7 +75,7 @@ grid.arrange(temp_comp, temp_anom, nrow = 1)
 <br>
 <details open><summary class='drop'>Precipitation</summary>
 ```{r fig.height=7, fig.width=13, results = 'asis', fig.cap = anom_comp_cap1}
-ppt_comp <- plotClimComps(park = park,years= yr_current, palette = 'blue', parameter = c('ppt'),
+ppt_comp <- plotClimComps(park = parkcode, years= yr_current, palette = 'blue', parameter = c('ppt'),
                            legend_position = "bottom", plot_title = F, units = "eng", 
                           layers = c("points", "lines"), legend_row = 2)
 ppt_anom <- plotClimAnom(park = parkcode, years = yr_current, parameter = 'ppt_pct',
@@ -87,11 +88,11 @@ grid.arrange(ppt_comp, ppt_anom, nrow = 1)
 <br>
 <details open><summary class='drop'>Drought Condition</summary>
 ```{r fig.height=7, fig.width=13, results = 'asis', fig.cap = drgt_cumppt_cap1}
-enddate <- as.Date(child_env$end_date, format = "%m/%d/%Y")
+enddate <- as.Date(child_env$end_date, format = "%m/%d/%Y", tryFormats = c( "%m/%d/%Y", "%m-%d-%Y", "%Y/%m/%d"))
 drgt <- plotClimDrought(park = parkcode, years = yr_current, 
                         legend_position = 'bottom', legend_row = 2, 
-                        end_date = child_env$end_date, x_pad = c(0.05, 0.05)) + 
-        geom_vline(xintercept = enddate, linetype = "dashed")
+                        end_date = enddate, x_pad = c(0.05, 0.05)) + 
+        geom_vline(xintercept = as.Date(enddate, format = "%m/%d/%Y"), linetype = "dashed")
 
 pptcum <- plotClimCumPrecip(park = parkcode, years = yr_current, 
                             legend_position = "bottom", palette = "#1e90ff", 
@@ -131,7 +132,7 @@ plotClimAnom(park = parkcode, years = yr1:yr_current, parameter = 'ppt_pct',
 temp <- plotClimTrend(park = parkcode, years = yr1:yr_current, units = "eng",
                       gridlines = "grid_x", parameter = "tmax", 
                       facet_param = F, layers = "lines", 
-                      palette = c("red"), line_width = 1, x_pad = c(0,29)) + 
+                      palette = c("red"), line_width = 1, x_pad = c(0.02,6)) + 
   theme(axis.text.x = element_blank(), 
         axis.title.y = element_text(size = 9), 
         plot.margin = margin(l = 5, r = 8, b = 7, t = 2))
@@ -139,14 +140,15 @@ temp <- plotClimTrend(park = parkcode, years = yr1:yr_current, units = "eng",
 ppt <- plotClimTrend(park = parkcode, years = yr1:yr_current, units = "eng",
                      gridlines = 'grid_x', parameter = 'ppt',
                      facet_param = F, layers = "bar",
-                     palette = "#1e90ff", line_width = 1, x_pad = c(0,29)) +
+                     palette = "#1e90ff", line_width = 1, x_pad = c(0.02,6)) +
   theme(axis.text.x = element_blank(), 
         axis.title.y = element_text(size = 9), 
         plot.margin = margin(l = 5, r = 8, b = 2))
 
 drgt <- plotClimDrought(park = parkcode, years = yr1:yr_current, gridlines = "grid_x", 
-                legend_position = "bottom", end_date = child_env$end_date, x_pad = c(0.01,0)) +
-        theme(axis.title.y = element_text(size = 9))
+                legend_position = "bottom", end_date = child_env$end_date, x_pad = c(0,39)) +
+        theme(axis.title.y = element_text(size = 9)) + 
+        geom_vline(xintercept = as.Date(enddate, format = "%m/%d/%Y"), linetype = "dashed")
 
 grid.arrange(ggplotGrob(temp), ggplotGrob(ppt), ggplotGrob(drgt), 
              nrow = 3, ncol = 1, heights = c(0.4, 0.4, 1.5))
@@ -237,7 +239,8 @@ plotClimAnom(park = parkcode, years = 1900:yr_current, gridlines = "grid_x",
 #drgt <- 
   plotClimDrought(park = parkcode, years = 2000:yr_current, gridlines = "grid_x", 
                 legend_position = "bottom", end_date = child_env$end_date, x_pad = c(0.01,0)) +
-        theme(axis.title.y = element_text(size = 9))
+        theme(axis.title.y = element_text(size = 9)) + 
+        geom_vline(xintercept = as.Date(enddate, format = "%m/%d/%Y"), linetype = "dashed")
 
 # grid.arrange(ggplotGrob(temp), ggplotGrob(ppt), ggplotGrob(drgt), 
 #              nrow = 3, ncol = 1, heights = c(0.4, 0.4, 1.5))
