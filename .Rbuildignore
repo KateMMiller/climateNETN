@@ -4,3 +4,5 @@
 ^scripts$
 ^docs$
 .docx$
+^background$
+.png$
