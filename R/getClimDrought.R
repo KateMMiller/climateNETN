@@ -65,7 +65,8 @@
 #' @export
 
 getClimDrought <- function(park = "all",
-                           years = c(2006:2023), week_start = NA, end_date = NA,
+                           years = c(2006:format(Sys.Date(), "%Y")),
+                           week_start = NA, end_date = NA,
                            dom_county = TRUE){
 
   #--- error handling ---
@@ -155,6 +156,7 @@ getClimDrought <- function(park = "all",
     #dsci <- read.table(textConnection(dsci2), sep = ",", header = T)
     #dsci <- jsonlite::fromJSON(dsci2) # DSCI ranges from 0 to 500 with 500 being most extreme drought
     dsci$UnitCode <- park
+    dsci$FIPS <- as.character(dsci$FIPS)
     return(dsci)
   }
 
@@ -172,6 +174,7 @@ getClimDrought <- function(park = "all",
     #drgt <- jsonlite::fromJSON(drgt2)
     #drgt <- read.table(textConnection(drgt2), sep = ",", header = T)
     drgt$UnitCode <- park
+    drgt$FIPS <- as.character(drgt$FIPS)
     return(drgt)
   }
 

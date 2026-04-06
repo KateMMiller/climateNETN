@@ -6,7 +6,7 @@
 \usage{
 getClimDrought(
   park = "all",
-  years = c(2006:2023),
+  years = c(2006:format(Sys.Date(), "\%Y")),
   week_start = NA,
   end_date = NA,
   dom_county = TRUE
