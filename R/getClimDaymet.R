@@ -48,7 +48,7 @@
 #' @export
 
 getClimDaymet <- function(park = "all",
-                              years = c(2006:2023)){
+                              years = c(2006:format(Sys.Date(), "%Y"))){
   #--- error handling ---
   park <- match.arg(park, several.ok = TRUE,
                     c("all", "LNETN", "ACAD", "BOHA", "MABI", "MIMA", "MORR",

@@ -4,7 +4,7 @@
 \alias{getClimDaymet}
 \title{getClimDaymet: Download daily Daymet gridded climate data directly from REST}
 \usage{
-getClimDaymet(park = "all", years = c(2006:2023))
+getClimDaymet(park = "all", years = c(2006:format(Sys.Date(), "\%Y")))
 }
 \arguments{
 \item{park}{Combine data from all parks or one or more parks at a time. Valid inputs:
