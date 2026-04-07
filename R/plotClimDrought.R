@@ -68,7 +68,7 @@
 #' plotClimDrought(park = "MORR", years = 2023, dom_county = FALSE)
 #'
 #' # Plot drought info for ACAD counties in 2024
-#' plotClimDrought(park = "ACAD", years = 2024, dom_county = FALSE)
+#' plotClimDrought(park = "ACAD", years = 2024, dom_county = T)
 #'}
 #'
 #' @export
@@ -98,11 +98,19 @@ plotClimDrought <- function(park = "all",
   }
 
   # Need to include park to get fips code
-  ddata <- getClimDrought(park = park, years = years, dom_county = dom_county, end_date = end_date) |>
+  ddata <-
+    if(exists(data("NETN_drought_weekly"))){NETN_drought_weekly |>
+        mutate(dom_county = case_when(UnitCode == "ACAD" & County == "Knox County" ~ FALSE,
+                                      UnitCode == "MORR" & County == "Somerset County" ~ FALSE,
+                                      TRUE ~ TRUE)) |> distinct() |>
+        dplyr::select(-D0, -D1, -D2, -D3, -D4) |>
+        filter(UnitCode == park)
+      } else {
+    getClimDrought(park = park, years = years, dom_county = dom_county, end_date = end_date) |>
     mutate(dom_county = case_when(UnitCode == "ACAD" & County == "Knox County" ~ FALSE,
                                   UnitCode == "MORR" & County == "Somerset County" ~ FALSE,
-                                  TRUE ~ TRUE)) |> unique() |>
-    dplyr::select(-D0, -D1, -D2, -D3, -D4)
+                                  TRUE ~ TRUE)) |> distinct() |>
+    dplyr::select(-D0, -D1, -D2, -D3, -D4)}
 
   # Take only dominant county if specified
   ddata2 <- if(dom_county == TRUE){filter(ddata, dom_county == TRUE)} else {ddata}
@@ -188,8 +196,9 @@ plotClimDrought <- function(park = "all",
           axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
           legend.text = element_text(size = 9),
           legend.title = element_text(size = 9)) + #,
-    {if(legend_position == "bottom"){guides(fill = guide_legend(nrow = 1, byrow = T),
-                                            color = guide_legend(nrow = 1, byrow = T))}} +
+    # {if(legend_position == "bottom"){
+    #   guides(fill = guide_legend(nrow = 1, byrow = T),
+    #          color = guide_legend(nrow = 1, byrow = T))}} +
     {if(any(gridlines %in% c("grid_y", "both"))){
       theme(panel.grid.major.y = element_line(color = 'grey'))}} + #,
     {if(break_len == "4 years" & gridlines %in% c("grid_y", "both")){
@@ -200,13 +209,14 @@ plotClimDrought <- function(park = "all",
       theme(panel.grid.minor.x = element_line(color = 'grey'))}} +
     #panel.grid.minor.x = element_line(color = 'grey'))}} +
     labs(y = y_lab, x = x_lab) +
-    scale_y_continuous(n.breaks = 5, expand = c(0,0), limits = c(0, 100)) +
+    scale_y_continuous(n.breaks = 5, expand = c(0,0),
+                       limits = c(0, 100)) +
      # facets
     {if(facet_park){facet_wrap(~UnitCode)}} + #change to county
     {if(facet_county){facet_wrap(~County)}} +
     {if(facet_park_county){facet_wrap(~UnitCode + County)}} +
-    guides(color = guide_legend(nrow = legend_row),
-           fill = guide_legend(nrow = legend_row))
+    guides(color = guide_legend(nrow = legend_row, byrow = T),
+           fill = guide_legend(nrow = legend_row, byrow = T))
 
   return(dplot)
 
