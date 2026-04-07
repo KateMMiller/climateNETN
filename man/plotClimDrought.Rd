@@ -81,7 +81,7 @@ plotClimDrought(park = c("MABI", "SAGA"), years = 2020:2024)
 plotClimDrought(park = "MORR", years = 2023, dom_county = FALSE)
 
 # Plot drought info for ACAD counties in 2024
-plotClimDrought(park = "ACAD", years = 2024, dom_county = FALSE)
+plotClimDrought(park = "ACAD", years = 2024, dom_county = T)
 }
 
 }
