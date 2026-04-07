@@ -23,11 +23,17 @@ library(tidyverse)
 library(grid)
 library(gridExtra)
 library(kableExtra)
+library(climateNETN)
 #library(plotly)
 ```
 
 ```{r }
-# park = "MABI"; yr_start = 2006; yr_current = 2024; child_env <- data.frame(end_date = "07/31/2024")
+# comment out next 3 lines unless troubleshooting
+# child_env <- data.frame(park = "MABI", yr_start = 2006,
+#                         yr_current = 2026, end_date = "03/03/2026")
+# park <- child_env$park
+# yr_current <- child_env$yr_current
+
 parkcode <- child_env$park
 parkname <- child_env$park_df$UnitName[child_env$park_df$UnitCode == parkcode]
 end_date <- child_env$end_date
