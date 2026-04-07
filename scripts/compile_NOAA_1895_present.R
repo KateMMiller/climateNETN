@@ -65,18 +65,32 @@ usethis::use_data(NETN_clim_annual, overwrite = T)
 head(NETN_clim_annual)
 
 # Add new months
-
 library(tidyverse)
 library(climateNETN)
 library(sf)
 #library(raster)
 
+# CT fips code is no longer county-level in US drought monitor
+# closest_WS$ParkFIPS[closest_WS$UnitCode == "WEFA"] <- "09190"
+# usethis::use_data(closest_WS, overwrite = T)
+
 data("NETN_centroids")
 data("NETN_clim_annual")
+data("NETN_drought_weekly")
 netn_sf <- st_as_sf(NETN_centroids, coords = c("long", "lat"), crs = 4326)
 netn_bbox <- st_bbox(netn_sf)
-new_mon <- getClimNOAA(year = 2025, months = 12)
+
+# NOAA climate data
+new_mon <- getClimNOAA(year = 2026, months = 1:2)
 head(new_mon)
 NETN_clim_annual <- rbind(NETN_clim_annual, new_mon)
 usethis::use_data(NETN_clim_annual, overwrite = T)
+
+# drought
+#drgt <- getClimDrought(park = "all", years = 2000:2025)
+drgt_new <- getClimDrought(park = "all", years = 2026)
+NETN_drought_weekly <- rbind(NETN_drought_weekly, drgt_new) |> distinct()
+usethis::use_data(NETN_drought_weekly, overwrite = T)
+
+head(drgt_new)
 # Once this is complete, rebuild package, then commit changes to github.
