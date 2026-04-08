@@ -74,7 +74,7 @@
 #' @export
 
 plotClimDrought <- function(park = "all",
-                            years = format(Sys.Date(), format = "%Y"),
+                            years = as.numeric(format(Sys.Date(), format = "%Y")),
                             months = 1:12, dom_county = TRUE, end_date = NA,
                             legend_position = 'right', plot_title = TRUE,
                             gridlines = 'none', x_pad = c(0, 0), legend_row = 1){
@@ -184,7 +184,8 @@ plotClimDrought <- function(park = "all",
     # axis format
     scale_x_date(breaks = unique(datebreaks), limits = c(min(datebreaks), max(datebreaks)),
                  #labels = scales::label_date(date_format), expand = x_pad) +
-                 labels = scales::label_date(date_format), expand = x_pad) +
+                 labels = scales::label_date(date_format),
+                 expand = x_pad) +
     # layer formatting
     scale_fill_manual(values = c("#FFF000", "#FCD37F", "#FFAA00", "#E60000", "#730000"), name = "Drought Level") +
     scale_color_manual(values = c("#F0E100", "#E7C274", "#E19600", "#D10000", "#680000"), name = "Drought Level") +

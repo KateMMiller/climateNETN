@@ -6,7 +6,7 @@
 \usage{
 plotClimDrought(
   park = "all",
-  years = format(Sys.Date(), format = "\%Y"),
+  years = as.numeric(format(Sys.Date(), format = "\%Y")),
   months = 1:12,
   dom_county = TRUE,
   end_date = NA,
