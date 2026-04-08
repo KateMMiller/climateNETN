@@ -13,7 +13,7 @@
 #' the previous level (e.g. D0) is listed as 100. The columns with pct (e.g. D0pct) correct for that, so that
 #' D0 + ... + D05 + None = 100.
 #'
-#' @importFrom dplyr case_when filter full_join mutate
+#' @importFrom dplyr case_when distinct filter full_join mutate
 #' @importFrom purrr list_rbind map
 #'
 #' @param park Combine data from all parks or one or more parks at a time. Valid inputs:
