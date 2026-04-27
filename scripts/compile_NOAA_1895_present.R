@@ -83,7 +83,7 @@ netn_bbox <- st_bbox(netn_sf)
 # NOAA climate data
 new_mon <- getClimNOAA(year = 2026, months = 3)
 head(new_mon)
-NETN_clim_annual <- rbind(NETN_clim_annual, new_mon)
+NETN_clim_annual <- rbind(NETN_clim_annual, new_mon) |> distinct()
 usethis::use_data(NETN_clim_annual, overwrite = T)
 
 # drought
