@@ -81,13 +81,15 @@ netn_sf <- st_as_sf(NETN_centroids, coords = c("long", "lat"), crs = 4326)
 netn_bbox <- st_bbox(netn_sf)
 
 # NOAA climate data
-new_mon <- getClimNOAA(year = 2026, months = 6)
+new_mon <- getClimNOAA(year = 2026, months = 7)
 NETN_clim_annual <- rbind(NETN_clim_annual, new_mon) |> distinct()
 usethis::use_data(NETN_clim_annual, overwrite = T)
 
 # drought
 #drgt <- getClimDrought(park = "all", years = 2000:2025)
-drgt_new <- getClimDrought(park = "all", years = 2026)
+drgt_new <- getClimDrought(park = "all", years = 2026, week_start = "08/04/2026") # update this to have the latest drought
+# figure on first tab of index.
+
 NETN_drought_weekly <- rbind(NETN_drought_weekly, drgt_new) |> distinct()
 usethis::use_data(NETN_drought_weekly, overwrite = T)
 
