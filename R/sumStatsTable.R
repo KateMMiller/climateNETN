@@ -3,7 +3,7 @@
 #'
 #' @title sumStatsTable: Summarize climate records
 #'
-#' @importFrom dplyr arrange filter group_by mutate select slice_max slice_min
+#' @importFrom dplyr arrange filter group_by mutate select slice_max slice_min ungroup
 #' @importFrom purrr list_rbind map
 #' @importFrom tidyr pivot_longer pivot_wider
 #'
@@ -49,7 +49,6 @@
 #' # Return dataframe of top 3 records in WEFA for all years in scientific units
 #' sumStatsTable(park = "WEFA", top_n = 3, kable = F)
 #'
-#' # Generate
 #'}
 #'
 #' @return Returns a dataframe or kable of climate statistics

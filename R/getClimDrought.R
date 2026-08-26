@@ -47,9 +47,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' # RUN FIRST
-#' library(waterNETN)
-#' importData()
 #'
 #' # Get drought info for MABI and SAGA sites for first week of May
 #' mabisaga <- getClimDrought(park = c("MABI", "SAGA"), week_start = "05/01/2024")

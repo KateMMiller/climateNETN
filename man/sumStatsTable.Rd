@@ -60,7 +60,6 @@ sumStatsTable(park = "ACAD", units = "eng", top_n = 5, kable = T)
 # Return dataframe of top 3 records in WEFA for all years in scientific units
 sumStatsTable(park = "WEFA", top_n = 3, kable = F)
 
-# Generate
 }
 
 }

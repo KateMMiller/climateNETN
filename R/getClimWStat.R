@@ -39,10 +39,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' # RUN FIRST
-#' library(climateNETN)
-#' importData()
-#'
 #' # get weather data for ROVA from 2020-2023
 #' rova <- getClimWStat(park = "ROVA", years = 2020:2023)
 #'

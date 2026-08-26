@@ -71,7 +71,7 @@ Options are c("UnitCode", "UnitName").}
 \item{gridlines}{Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")}
 }
 \value{
-Returns a ggplot object of specified climate trends
+Returns a ggplot object of specified climate metric anomalies by month.
 }
 \description{
 This function produces a trend plot filtered on park, year, month, and

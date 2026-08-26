@@ -82,7 +82,7 @@
 #'
 #'}
 #'
-#' @return Returns a ggplot object of specified climate trends
+#' @return Returns a ggplot object of specified climate metric anomalies by month.
 #'
 #' @export
 #'
@@ -260,7 +260,7 @@ plotClimAnom <- function(park = "all",
     datebreaks <- seq(min_date, max_date, by = break_len)
   } else {
     datebreaks <- unique(c(seq(min(clim_comb4$date2), max(clim_comb4$date2) + 30, by = break_len),
-                            paste0(as.numeric(max(clim_comb4$year)) + 1, "01-01")))
+                            paste0(as.numeric(max(clim_comb4$year)) + 1, "-01-01")))
   }
 
   datelims <- c(min(datebreaks), max(datebreaks))

@@ -79,7 +79,7 @@ Default is c(0.01, 0)}
 \item{line_width}{Numeric. Specify the width of the line. Default is 1.}
 }
 \value{
-Returns a ggplot object of specified climate trends
+Returns a ggplot object of specified monthly climate trends as bar chart
 }
 \description{
 This function produces bar plot filtered on park, year, month, and climate parameter.

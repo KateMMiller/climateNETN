@@ -34,20 +34,18 @@
 #' @param months Vector of numeric months to query. Typically there's about a 6 week delay in monthly data
 #' availability.
 #'
-#' @return Data frame of Daymet daily climate data for each specified site.
+#' @return Data frame of NOAA monthly gridded climate data for each specified site.
 #'
 #' @examples
 #' \dontrun{
-#' # RUN FIRST
-#' library(climateNETN)
 #'
-#' # get weather data for January - May 2024 for all NETN (will take a bit to download)
-#' getClimNOAA(months = 1:5, years = 2024)
+#' # get climate data for January - May 2024 for all NETN (will take a bit to download)
+#' getClimNOAA(months = 1:5, year = 2024)
 #'
-#' # get weather data for May 2024 for ROVA
-#' getClimNOAA(park = "ROVA", months = 5)
+#' # get climate data for May 2025 for ROVA
+#' getClimNOAA(park = "ROVA", months = 5, year = 2025)
 #'
-#' # get weather data for all of 2023 in LNETN
+#' # get climate data for all of 2023 in LNETN
 #' getClimNOAA(park = "LNETN", year = 2023, months = 1:12)
 #'
 #'}

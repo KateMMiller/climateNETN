@@ -76,7 +76,7 @@ specify 1 color}
 \item{color_rev}{Reverse the order of the color pallet. Only enabled for palette = 'viridis'.}
 
 \item{legend_position}{Specify location of legend. To turn legend off, use legend_position =
-"none" (Default). Other options are "top", "bottom", "left", "right".}
+"none". Other options are "top", "bottom", "left", "right" (default).}
 
 \item{gridlines}{Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")}
 
@@ -88,7 +88,7 @@ If FALSE, only plots the normal line.}
 \item{...}{Additional arguments relevant to \code{sumClimAvgs()} or \code{sumClimMonthly()}}
 }
 \value{
-Returns a ggplot object of specified climate trends
+Returns a ggplot object of specified climate comparisons
 }
 \description{
 This function compares historic average monthly climate variables with
@@ -102,22 +102,25 @@ monthly climate data from January 2006 through May 2024.
 \dontrun{
 
 # Plot mean monthly temp for MABI for 2019:2023 and all months with red-blue color palette
-plotClimComps(park = "MABI", years = 2019:2023, parameter = "tmean", palette = c('red', 'blue'))
+plotClimComps(park = "MABI", years = 2019:2023, parameter = "tmean", palette = c('red', 'blue'),
+legend_row = 10) # plots legend vertically
 
 # Same as above, but with points too
 plotClimComps(park = "MABI", years = 2019:2023, parameter = "tmean", palette = c('red', 'blue'),
-  layers = c('points', 'lines'))
+  layers = c('points', 'lines'), legend_row = 10)
 
 # Plot max monthly temp ACAD for 2019:2023 and all months with 1991- 2020 normals with english units
 plotClimComps(park = "ACAD", years = 2019:2023, parameter = "tmax", normal = "norm1990",
-  palette = c('red', 'blue'), layers = 'lines', units= 'eng')
+  palette = c('red', 'blue'), layers = 'lines', units= 'eng', legend_row = 10)
 
 # Plot total monthly precip for ACAD for past 10 years using a blue color scheme
 plotClimComps(park = "ACAD", years = 2013:2023, parameter = 'ppt',
-  palette = c("#75C5FF", "#3563DD", "#323969"))
+  palette = c("#75C5FF", "#3563DD", "#323969"), legend_position = "bottom",
+  legend_row = 4)
 
 # Plot total monthly precip for latest year in ACAD without the error bands
-plotClimComps(park = "ACAD", years = 2024, parameter = "ppt", months = 1:5, palette = "red", include_error = F)
+plotClimComps(park = "ACAD", years = 2025, parameter = "ppt", legend_row = 3,
+  palette = "blue", include_error = F)
 
 }
 

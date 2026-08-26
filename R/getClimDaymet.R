@@ -34,8 +34,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' # RUN FIRST
-#' library(climateNETN)
 #'
 #' # download for MORR 2023 only
 #' morr <- getClimDaymet(park = "MORR", years = 2023)

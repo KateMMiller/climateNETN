@@ -1,6 +1,6 @@
 Package: climateNETN
 Title: Compile and visualize NETN climate data
-Version: 1.01
+Version: 1.02
 Authors@R: 
     person("Kate", "Miller", email = "kathryn_miller@nps.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-8823-6373"))

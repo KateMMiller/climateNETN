@@ -50,10 +50,6 @@ to daily value. ACAD NADP Precip data only go back to 2008.
 }
 \examples{
 \dontrun{
-# RUN FIRST
-library(climateNETN)
-importData()
-
 # get weather data for ROVA from 2020-2023
 rova <- getClimWStat(park = "ROVA", years = 2020:2023)
 

@@ -82,7 +82,7 @@
 #'
 #'}
 #'
-#' @return Returns a ggplot object of specified climate trends
+#' @return Returns a ggplot object of specified monthly climate trends as bar chart
 #'
 #' @export
 #'

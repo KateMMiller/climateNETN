@@ -10,7 +10,7 @@ plotClimDrought(
   months = 1:12,
   dom_county = TRUE,
   end_date = NA,
-  legend_position = "right",
+  legend_position = "bottom",
   plot_title = TRUE,
   gridlines = "none",
   x_pad = c(0, 0),
@@ -44,7 +44,7 @@ If FALSE, facets on county.}
 \item{end_date}{Quoted end date of query. If blank (Default), will return the most recent week of data available.}
 
 \item{legend_position}{Specify location of legend. To turn legend off, use legend_position = "none". Other
-options are "top", "bottom", "left", "right" (default).}
+options are "top", "bottom (default)", "left", "right".}
 
 \item{plot_title}{Logical. If TRUE (default) prints site name at top of figure. If FALSE,
 does not print site name. Only enabled when one site is selected.}
@@ -70,9 +70,6 @@ county, specify dom_county = TRUE (default).
 }
 \examples{
 \dontrun{
-# RUN FIRST
-library(waterNETN)
-importData()
 
 # Plot drought info for MABI and SAGA for 2020 to 2024
 plotClimDrought(park = c("MABI", "SAGA"), years = 2020:2024)
@@ -80,8 +77,8 @@ plotClimDrought(park = c("MABI", "SAGA"), years = 2020:2024)
 # Plot drought info for both MORR counties for 2023
 plotClimDrought(park = "MORR", years = 2023, dom_county = FALSE)
 
-# Plot drought info for ACAD counties in 2024
-plotClimDrought(park = "ACAD", years = 2024, dom_county = T)
+# Plot drought info for ACAD dominant county from 2006:2026
+plotClimDrought(park = "ACAD", years = 2006:2026)
 }
 
 }

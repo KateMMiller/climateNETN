@@ -75,7 +75,7 @@ If FALSE, only plots the normal line.}
 \item{legend_row}{Integer. Specify number of rows to plot the legend. Default is 1.}
 }
 \value{
-Returns a ggplot object of specified climate trends
+Returns a ggplot object of cumulative precipitation trends
 }
 \description{
 This function plots cumulative monthly precipitation for a given year compared

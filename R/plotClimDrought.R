@@ -41,7 +41,7 @@
 #' @param end_date Quoted end date of query. If blank (Default), will return the most recent week of data available.
 #'
 #' @param legend_position Specify location of legend. To turn legend off, use legend_position = "none". Other
-#' options are "top", "bottom", "left", "right" (default).
+#' options are "top", "bottom (default)", "left", "right".
 #'
 #' @param gridlines Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")
 #'
@@ -57,9 +57,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' # RUN FIRST
-#' library(waterNETN)
-#' importData()
 #'
 #' # Plot drought info for MABI and SAGA for 2020 to 2024
 #' plotClimDrought(park = c("MABI", "SAGA"), years = 2020:2024)
@@ -67,8 +64,8 @@
 #' # Plot drought info for both MORR counties for 2023
 #' plotClimDrought(park = "MORR", years = 2023, dom_county = FALSE)
 #'
-#' # Plot drought info for ACAD counties in 2024
-#' plotClimDrought(park = "ACAD", years = 2024, dom_county = T)
+#' # Plot drought info for ACAD dominant county from 2006:2026
+#' plotClimDrought(park = "ACAD", years = 2006:2026)
 #'}
 #'
 #' @export
@@ -76,7 +73,7 @@
 plotClimDrought <- function(park = "all",
                             years = as.numeric(format(Sys.Date(), format = "%Y")),
                             months = 1:12, dom_county = TRUE, end_date = NA,
-                            legend_position = 'right', plot_title = TRUE,
+                            legend_position = 'bottom', plot_title = TRUE,
                             gridlines = 'none', x_pad = c(0, 0), legend_row = 1){
 
   #--- error handling ---
@@ -158,13 +155,8 @@ plotClimDrought <- function(park = "all",
                       max_date, by = break_len)
   } else {
     datebreaks <- unique(c(seq(min(ddata3$Date), max(ddata3$Date) + 30, by = break_len),
-                           paste0(as.numeric(max(ddata3$year)) + 1, "01-01")))
+                           paste0(as.numeric(max(ddata3$year)) + 1, "-01-04")))
   }
-
-  # if(break_len == "1 year"){
-  #   num_uniq <- length(unique(format(datebreaks, "%Y")))
-  #   datebreaks <- datebreaks[1:num_uniq]
-  # }
 
   num_parks <- length(unique(ddata3$UnitCode))
   num_county <- length(unique(ddata3$County))

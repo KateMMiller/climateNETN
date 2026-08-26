@@ -3,7 +3,7 @@
 #'
 #' @title plotClimTrend: Plot climate trends
 #'
-#' @importFrom dplyr filter left_join mutate
+#' @importFrom dplyr filter left_join mutate summarize
 #' @importFrom tidyr pivot_longer
 #' @importFrom purrr map list_rbind
 #' @import ggplot2
@@ -93,22 +93,24 @@
 #' \dontrun{
 #'
 #' # Plot total monthly precip for 2006:2023 and all months, without smoothing in English units
-#' plotClimTrend(park = "MABI", years = 2006:2023, parameter = "ppt", smooth = F, units = 'eng')
+#' plotClimTrend(park = "MABI", years = 2006:2023, parameter = "ppt", units = 'eng')
 #'
 #' # Plot avg temp in MABI from 1895:2024, without points and with smoothed line and span 0.1.
 #' plotClimTrend(park = "MABI", years = 1895:2024, layers = 'lines', parameter = "tmean", span = 0.1)
 #'
 #' # Plot monthly mean temperature for MABI and SARA from 2006:2024, with smoothed line, span 0.7,
-#' and only sample months using the Dark2 color palette.
+#' and only sample months using the plasma color palette.
 #' plotClimTrend(park = c("MABI", "SARA"), years = 2006:2024,
-#'               parameter = "tmean", span = 0.7, months = 5:10, palette = "Dark2")
+#'               parameter = "tmean", span = 0.7, months = 5:10, palette = "plasma")
 #'
 #' # Plot 5-year rolling average temp with points for ACAD full time-series
 #' plotClimTrend(park = "ACAD", parameter = "tmean", layers = c("points", "rollavg"), years = 1900:2024)
 #'
 #' # Plot 10-year rolling average of all temp params for ACAD full time-series with manual colors
-#' plotClimTrend(park = "ACAD", parameter = c("tmean", "tmax", "tmin"), layers = "rollavg", avg_window = 10,
-#' palette = c("black", "red", "blue"))
+#' plotClimTrend(park = "ACAD", parameter = c("tmean", "tmax", "tmin"),
+#'   years = 1900:2026,
+#'   layers = "rollavg", avg_window = 10,
+#'   palette = c("black", "red", "blue"))
 #'
 #'}
 #'
@@ -187,7 +189,7 @@ plotClimTrend <- function(park = "all",
   mon_curr <- as.numeric(format(Sys.Date(), "%m"))
   mon_next_day <- as.numeric(format(Sys.Date() + 1, "%m"))
   mon_comp <- ifelse(mon_next_day > mon_curr, sprintf("%02d", mon_curr), sprintf("%02d", mon_curr - 1))
-  latest_date_comp <- as.Date(paste0(format(Sys.Date(), "%Y"), "-", mon_comp, "-", 15), format = "%m-%d-%Y")
+  latest_date_comp <- as.Date(paste0(format(Sys.Date(), "%Y"), "-", mon_comp, "-", 15), format = "%Y-%m-%d")
   latest_date_data <- as.Date(max(date_range_data), format = "%Y-%m-%d")
 
   new_dates <- as.Date(new_dates1[new_dates1 <= latest_date_comp], format = "%Y-%m-%d")
@@ -276,7 +278,7 @@ plotClimTrend <- function(park = "all",
     datebreaks1 <- seq(min(clim_dat2$date2), max_date, by = break_len)
   } else {
     datebreaks1 <- unique(c(seq(min(clim_dat2$date2), max(clim_dat2$date2) + 30, by = break_len),
-                           paste0(as.numeric(max(clim_dat2$year)) + 1, "01-01")))
+                           paste0(as.numeric(max(clim_dat2$year)) + 1, "-01-15")))
   }
 
   #datebreaks1 <- seq(min(clim_dat2$date2, na.rm = T), max(clim_dat2$date2, na.rm = T) + 30, by = break_len)

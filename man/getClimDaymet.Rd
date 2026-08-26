@@ -41,8 +41,6 @@ server, and will receive an error message when that happens.
 }
 \examples{
 \dontrun{
-# RUN FIRST
-library(climateNETN)
 
 # download for MORR 2023 only
 morr <- getClimDaymet(park = "MORR", years = 2023)

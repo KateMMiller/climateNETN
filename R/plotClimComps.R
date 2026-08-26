@@ -68,7 +68,7 @@
 #' does not print site name. Only enabled when one site is selected.
 #'
 #' @param legend_position Specify location of legend. To turn legend off, use legend_position =
-#' "none" (Default). Other options are "top", "bottom", "left", "right".
+#' "none". Other options are "top", "bottom", "left", "right" (default).
 #'
 #' @param gridlines Specify whether to add gridlines or not. Options are c("none" (Default), "grid_y", "grid_x", "both")
 #'
@@ -83,26 +83,29 @@
 #' \dontrun{
 #'
 #' # Plot mean monthly temp for MABI for 2019:2023 and all months with red-blue color palette
-#' plotClimComps(park = "MABI", years = 2019:2023, parameter = "tmean", palette = c('red', 'blue'))
+#' plotClimComps(park = "MABI", years = 2019:2023, parameter = "tmean", palette = c('red', 'blue'),
+#' legend_row = 10) # plots legend vertically
 #'
 #' # Same as above, but with points too
 #' plotClimComps(park = "MABI", years = 2019:2023, parameter = "tmean", palette = c('red', 'blue'),
-#'   layers = c('points', 'lines'))
+#'   layers = c('points', 'lines'), legend_row = 10)
 #'
 #' # Plot max monthly temp ACAD for 2019:2023 and all months with 1991- 2020 normals with english units
 #' plotClimComps(park = "ACAD", years = 2019:2023, parameter = "tmax", normal = "norm1990",
-#'   palette = c('red', 'blue'), layers = 'lines', units= 'eng')
+#'   palette = c('red', 'blue'), layers = 'lines', units= 'eng', legend_row = 10)
 #'
 #' # Plot total monthly precip for ACAD for past 10 years using a blue color scheme
 #' plotClimComps(park = "ACAD", years = 2013:2023, parameter = 'ppt',
-#'   palette = c("#75C5FF", "#3563DD", "#323969"))
+#'   palette = c("#75C5FF", "#3563DD", "#323969"), legend_position = "bottom",
+#'   legend_row = 4)
 #'
 #' # Plot total monthly precip for latest year in ACAD without the error bands
-#' plotClimComps(park = "ACAD", years = 2024, parameter = "ppt", months = 1:5, palette = "red", include_error = F)
+#' plotClimComps(park = "ACAD", years = 2025, parameter = "ppt", legend_row = 3,
+#'   palette = "blue", include_error = F)
 #'
 #'}
 #'
-#' @return Returns a ggplot object of specified climate trends
+#' @return Returns a ggplot object of specified climate comparisons
 #'
 #' @export
 #'
@@ -276,10 +279,18 @@ plotClimComps <- function(park = "ACAD",
 
   avg_name <- ifelse(normal == "norm20cent", "Climate baseline: 1901 - 2000", "Climate baseline: 1991 - 2020")
 
-  band_df <- data.frame(col = c("#EDEDED", "#D3D3D3", "#AFAFAF", 'black', pal),
+  band_df <- if(include_error == TRUE){
+             data.frame(col = c("#EDEDED", "#D3D3D3", "#AFAFAF", 'black', pal),
                         labels = c("Min/Max", "95% range", "50% range", "Average",
                                    years),
                         values = c("d100", "d95", "d50", "Average", years))
+  } else {
+    data.frame(col = c('black', pal),
+               labels = c( "Average",
+                          years),
+               values = c("Average", years))
+  }
+
 
   clim_curr_final$grp <- "Current Year"
   avg_dat_dist_wide$grp <- avg_dat_dist_wide$distrib
@@ -311,8 +322,8 @@ plotClimComps <- function(park = "ACAD",
                          color = factor(year)))} +
       # labels/themes
       labs(x = NULL, y = y_label, title = ptitle,
-           color = NULL,#"Annual Values",
-           linetype = avg_name, linewidth = avg_name) +
+           color = NULL) +#,#"Annual Values",
+      #     linetype = avg_name, linewidth = avg_name) +
         scale_y_continuous(n.breaks = 8) +
       {if(any(gridlines %in% c("grid_y", "both"))){
         theme(
