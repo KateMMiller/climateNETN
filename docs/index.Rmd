@@ -15,7 +15,7 @@ params:
 ---
 # {.tabset .tabset-pills}
 
-<h1 style='color:red;'>This website has been moved to <a href="https://doi-nps.github.io/climateNETN">https://doi-nps.github.io/climateNETN</a> and will no longer be updated on this site.</h1>
+<h1 style='color:red;'>This website has been moved to <a href="https://doi-nps.github.io/climateNETN">https://doi-nps.github.io/climateNETN</a> and will no longer be updated on this site. The code repo for this site is <a href="https://github.com/DOI-NPS/climateNETN">https://github.com/DOI-NPS/climateNETN</a>.</h1>
 
 ```{r echo = F, include = F, cache = F}
 knitr::opts_chunk$set(echo = FALSE, fig.pos = "h", warning = FALSE, message = FALSE)
